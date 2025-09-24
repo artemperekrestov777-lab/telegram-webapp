@@ -442,6 +442,12 @@
 <body>
     <div class="header">
         <div class="logo">MacTabak</div>
+        <div class="filters" style="display: flex; gap: 10px; padding: 10px 15px; overflow-x: auto;">
+            <button class="filter-btn" onclick="sortBy('default')" style="padding: 6px 12px; background: white; border: 1px solid #ddd; border-radius: 15px; white-space: nowrap; font-size: 13px;">По умолчанию</button>
+            <button class="filter-btn" onclick="sortBy('price-low')" style="padding: 6px 12px; background: white; border: 1px solid #ddd; border-radius: 15px; white-space: nowrap; font-size: 13px;">Цена ↑</button>
+            <button class="filter-btn" onclick="sortBy('price-high')" style="padding: 6px 12px; background: white; border: 1px solid #ddd; border-radius: 15px; white-space: nowrap; font-size: 13px;">Цена ↓</button>
+            <button class="filter-btn" onclick="sortBy('new')" style="padding: 6px 12px; background: white; border: 1px solid #ddd; border-radius: 15px; white-space: nowrap; font-size: 13px;">Новинки</button>
+        </div>
         <div class="categories">
             <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
             <button class="category-btn" onclick="filterCategory('новинки')">Новинки</button>
@@ -825,41 +831,8 @@
 
         // Оформление заказа
         function checkout() {
-            if (Object.keys(cart).length === 0) {
-                showNotification('Корзина пуста!');
-                return;
-            }
-
-            const total = Object.entries(cart).reduce((sum, [productId, qty]) => {
-                const product = products.find(p => p.id == productId);
-                return sum + (product.price * qty);
-            }, 0);
-
-            const orderData = {
-                action: 'order',
-                items: Object.entries(cart).map(([productId, quantity]) => {
-                    const product = products.find(p => p.id == productId);
-                    return {
-                        name: product.name,
-                        price: product.price,
-                        quantity: quantity
-                    };
-                }),
-                subtotal: total,
-                delivery: 500,
-                total: total + 500
-            };
-
-            if (tg) {
-                tg.sendData(JSON.stringify(orderData));
-                tg.close();
-            } else {
-                alert('Заказ отправлен! Итого: ' + (total + 500) + ' ₽');
-                cart = {};
-                saveCart();
-                updateCartBadge();
-                closeCart();
-            }
+            // Теперь эта функция просто открывает корзину для совместимости
+            openCart();
         }
 
         // Закрытие модалки по клику вне
@@ -867,6 +840,60 @@
             if (event.target == document.getElementById('cartModal')) {
                 closeCart();
             }
+        }
+
+        // Функция сортировки товаров
+        function sortBy(type) {
+            let sortedProducts = [...products];
+
+            // Сначала фильтруем по категории
+            if (currentCategory !== 'all') {
+                sortedProducts = sortedProducts.filter(p => p.category === currentCategory);
+            }
+
+            // Затем сортируем
+            switch(type) {
+                case 'price-low':
+                    sortedProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    sortedProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'new':
+                    sortedProducts = sortedProducts.filter(p => p.badge === 'NEW');
+                    break;
+                case 'default':
+                default:
+                    // Оставляем как есть
+                    break;
+            }
+
+            // Отображаем отсортированные товары
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = sortedProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                        ${product.emoji}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.desc}</div>
+                        <div class="product-bottom">
+                            <div class="product-price">${product.price} ₽</div>
+                            <button class="add-btn" onclick="addToCart(${product.id})">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Подсвечиваем активную кнопку
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.style.background = 'white';
+                btn.style.color = '#333';
+            });
+            event.target.style.background = '#3498db';
+            event.target.style.color = 'white';
         }
 
         // Функции навигации
