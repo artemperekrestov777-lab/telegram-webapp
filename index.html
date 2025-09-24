@@ -535,19 +535,19 @@
 
     <!-- Нижняя навигация -->
     <div class="bottom-nav">
-        <div class="nav-item active">
+        <div class="nav-item active" onclick="showPage('home')">
             <span class="nav-icon">🏠</span>
             <span class="nav-label">Главная</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="showOrders()">
             <span class="nav-icon">📦</span>
             <span class="nav-label">Заказы</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="showProfile()">
             <span class="nav-icon">👤</span>
             <span class="nav-label">Профиль</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="showAbout()">
             <span class="nav-icon">ℹ️</span>
             <span class="nav-label">О нас</span>
         </div>
@@ -717,8 +717,13 @@
             currentSort = sort;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
+                if ((sort === 'price-asc' && btn.textContent.includes('↑')) ||
+                    (sort === 'price-desc' && btn.textContent.includes('↓')) ||
+                    (sort === 'new' && btn.textContent.includes('Новинки')) ||
+                    (sort === 'default' && btn.textContent.includes('По умолчанию'))) {
+                    btn.classList.add('active');
+                }
             });
-            event.target.classList.add('active');
             renderProducts();
         }
 
@@ -808,11 +813,10 @@
 
         // Очистка корзины
         function clearCart() {
-            if (confirm('Очистить корзину?')) {
-                cart = {};
-                renderCartItems();
-                updateCartCount();
-            }
+            cart = {};
+            renderCartItems();
+            updateCartCount();
+            updateTotal();
         }
 
         // Обновление итоговой суммы
@@ -915,6 +919,54 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Функция оформления заказа
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+
+            const total = calculateTotal();
+            const tg = window.Telegram?.WebApp;
+
+            if (tg) {
+                const orderData = {
+                    items: Object.entries(cart).map(([id, quantity]) => {
+                        const product = products.find(p => p.id == id);
+                        return {
+                            name: product.name,
+                            quantity: quantity,
+                            price: product.price
+                        };
+                    }),
+                    total: total
+                };
+                tg.sendData(JSON.stringify(orderData));
+            } else {
+                alert(`Заказ на сумму ${total} ₽ отправлен!`);
+                clearCart();
+            }
+        }
+
+        // Функции навигации
+        function showPage(page) {
+            console.log('Navigating to:', page);
+            // Здесь будет логика переключения страниц
+        }
+
+        function showOrders() {
+            alert('История заказов появится после первого заказа');
+        }
+
+        function showProfile() {
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            alert(`Профиль: ${user?.first_name || 'Пользователь'}`);
+        }
+
+        function showAbout() {
+            alert('MacTabak Shop - Лучший магазин табачной продукции\n\nТелефон: +7 (XXX) XXX-XX-XX\nTelegram: @mactabak_support');
         }
 
         // Инициализация Telegram Web App
