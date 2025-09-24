@@ -912,9 +912,11 @@
 
         // Функция оформления заказа - делаем глобальной
         window.checkout = function() {
+            console.log('Checkout called');
+
             if (Object.keys(cart).length === 0) {
                 const tg = window.Telegram?.WebApp;
-                if (tg) {
+                if (tg && tg.showAlert) {
                     tg.showAlert('Корзина пуста!');
                 } else {
                     alert('Корзина пуста!');
@@ -924,6 +926,7 @@
 
             const total = calculateTotal();
             const tg = window.Telegram?.WebApp;
+            console.log('Telegram WebApp available:', !!tg);
 
             const orderData = {
                 items: Object.entries(cart).map(([id, quantity]) => {
@@ -939,17 +942,32 @@
                 user: tg?.initDataUnsafe?.user
             };
 
-            if (tg && tg.sendData) {
-                // Отправляем данные боту
-                tg.MainButton.setText(`Оплатить ${total} ₽`);
+            if (tg) {
+                console.log('Sending order via Telegram');
+
+                // Очищаем предыдущие обработчики
+                tg.MainButton.offClick();
+
+                // Настраиваем главную кнопку
+                tg.MainButton.text = `Оплатить ${total} ₽`;
+                tg.MainButton.color = '#4CAF50';
+                tg.MainButton.textColor = '#ffffff';
+                tg.MainButton.isVisible = true;
                 tg.MainButton.show();
-                tg.MainButton.onClick(() => {
+
+                // Добавляем обработчик
+                tg.MainButton.onClick(function() {
+                    console.log('MainButton clicked, sending data');
                     tg.sendData(JSON.stringify(orderData));
-                    tg.close();
+                    emptyCart();
+                    closeCart();
                 });
+
+                // Также показываем уведомление
+                tg.showAlert(`Нажмите кнопку "Оплатить ${total} ₽" внизу для оформления заказа`);
             } else {
                 // Для тестирования вне Telegram
-                console.log('Заказ:', orderData);
+                console.log('Order data:', orderData);
                 alert(`Заказ на сумму ${total} ₽ отправлен!\n\nТовары:\n${orderData.items.map(item => `${item.name} x${item.quantity}`).join('\n')}`);
                 emptyCart();
                 closeCart();
