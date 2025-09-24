@@ -398,9 +398,17 @@
         <div class="logo">MacTabak</div>
         <div class="categories">
             <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
-            <button class="category-btn" onclick="filterCategory('табак')">Табак</button>
-            <button class="category-btn" onclick="filterCategory('аксессуары')">Аксессуары</button>
-            <button class="category-btn" onclick="filterCategory('чай')">Чай</button>
+            <button class="category-btn" onclick="filterCategory('новинки')">Новинки</button>
+            <button class="category-btn" onclick="filterCategory('стандартные')">Стандартные бленды</button>
+            <button class="category-btn" onclick="filterCategory('ароматизированные')">Ароматизированные</button>
+            <button class="category-btn" onclick="filterCategory('трубочные')">Трубочные</button>
+            <button class="category-btn" onclick="filterCategory('гильзы')">Гильзы</button>
+            <button class="category-btn" onclick="filterCategory('наборы')">Наборы</button>
+            <button class="category-btn" onclick="filterCategory('luxury')">Продукция МАКТАБАК</button>
+            <button class="category-btn" onclick="filterCategory('трубки')">Трубки</button>
+            <button class="category-btn" onclick="filterCategory('машинки')">Машинки</button>
+            <button class="category-btn" onclick="filterCategory('чай')">Китайский чай</button>
+            <button class="category-btn" onclick="filterCategory('тампер')">Тампер</button>
         </div>
     </div>
 
@@ -451,68 +459,71 @@
             tg.expand();
         }
 
-        // ВАШИ РЕАЛЬНЫЕ ТОВАРЫ ИЗ ТЗ
+        // ВАШИ РЕАЛЬНЫЕ ТОВАРЫ ИЗ ТЗ - 12 КАТЕГОРИЙ
         const products = [
-            // ТАБАК - Стандартные бленды
-            { id: 1, name: "ШТОРМ Storm", price: 1700, category: "табак", emoji: "🌪", desc: "Стандартный бленд" },
-            { id: 2, name: "ЛЕГЕНДА Legend", price: 1700, category: "табак", emoji: "⭐", desc: "Стандартный бленд" },
-            { id: 3, name: "КРАСНЫЙ ДРАКОН", price: 1700, category: "табак", emoji: "🔴", desc: "Red Dragon" },
-            { id: 4, name: "МАРШАЛ Marshal", price: 1700, category: "табак", emoji: "🎖", desc: "Стандартный бленд" },
-            { id: 5, name: "MAC-ВИНСТОН", price: 1950, category: "табак", emoji: "💼", desc: "Winston", badge: "TOP" },
+            // 1. НОВИНКИ
+            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "новинки", emoji: "🔥", desc: "Для трубки", badge: "NEW" },
+            { id: 2, name: "Зажигалка HONEST", price: 900, category: "новинки", emoji: "💥", desc: "Копия 4281" },
+            { id: 3, name: "Премиум гильзы OCB 500 Black", price: 600, category: "новинки", emoji: "⚫", desc: "Премиум", badge: "NEW" },
+            { id: 4, name: "МАШИНКА НАБИВОЧНАЯ LED 1", price: 3000, category: "новинки", emoji: "💡", desc: "Автоматическая", badge: "NEW" },
+            { id: 5, name: "Сумка кожаная MUXIANG №013", price: 4800, category: "новинки", emoji: "👜", desc: "№013 (1099)", badge: "NEW" },
 
-            // ТАБАК - Ароматизированные
-            { id: 6, name: "МАК МИКС", price: 2200, category: "табак", emoji: "🌈", desc: "Ароматизированный" },
-            { id: 7, name: "ЮБИЛЕЙНЫЙ", price: 2200, category: "табак", emoji: "🎉", desc: "Бленд юбилейный" },
-            { id: 8, name: "X-БЛЕНД", price: 2200, category: "табак", emoji: "❌", desc: "Ароматизированный" },
-            { id: 9, name: "КОФЕ Coffee", price: 2200, category: "табак", emoji: "☕", desc: "Ароматизированный" },
+            // 2. СТАНДАРТНЫЕ БЛЕНДЫ
+            { id: 6, name: "ШТОРМ Storm", price: 1700, category: "стандартные", emoji: "🌪", desc: "Классический" },
+            { id: 7, name: "ЛЕГЕНДА Legend", price: 1700, category: "стандартные", emoji: "⭐", desc: "Премиум" },
+            { id: 8, name: "КРАСНЫЙ ДРАКОН RED DRAGON", price: 1700, category: "стандартные", emoji: "🔴", desc: "Крепкий" },
+            { id: 9, name: "МАРШАЛ MARSHAL", price: 1700, category: "стандартные", emoji: "🎖", desc: "Средний" },
+            { id: 10, name: "MAC-ВИНСТОН WINSTON", price: 1950, category: "стандартные", emoji: "💼", desc: "Экстра", badge: "TOP" },
 
-            // ТАБАК - Трубочные
-            { id: 10, name: "CAPTAIN BLACK CREAM", price: 1200, category: "табак", emoji: "🚢", desc: "Капитан Черный Крем" },
-            { id: 11, name: "CAPTAIN BLACK PLATINUM", price: 1200, category: "табак", emoji: "💎", desc: "Платиновый" },
-            { id: 12, name: "МОНАРХ Monarch", price: 1200, category: "табак", emoji: "👑", desc: "Трубочный" },
-            { id: 13, name: "Трубочный МАК ТАБАК", price: 1000, category: "табак", emoji: "🚬", desc: "Классический" },
+            // 3. АРОМАТИЗИРОВАННЫЕ БЛЕНДЫ
+            { id: 11, name: "МАК МИКС", price: 2200, category: "ароматизированные", emoji: "🌈", desc: "Фруктовый" },
+            { id: 12, name: "БЛЕНД ЮБИЛЕЙНЫЙ", price: 2200, category: "ароматизированные", emoji: "🎉", desc: "Специальный" },
+            { id: 13, name: "X-БЛЕНД", price: 2200, category: "ароматизированные", emoji: "❌", desc: "Экзотический" },
+            { id: 14, name: "КОФЕ Coffee", price: 2200, category: "ароматизированные", emoji: "☕", desc: "Арабика" },
 
-            // АКСЕССУАРЫ - Зажигалки
-            { id: 14, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "аксессуары", emoji: "🔥", desc: "Для трубки", badge: "NEW" },
-            { id: 15, name: "Зажигалка HONEST", price: 900, category: "аксессуары", emoji: "💥", desc: "Копия 4281" },
+            // 4. ТРУБОЧНЫЕ БЛЕНДЫ
+            { id: 15, name: "CAPTAIN BLACK CREAM", price: 1200, category: "трубочные", emoji: "🚢", desc: "Капитан Черный Крем" },
+            { id: 16, name: "CAPTAIN BLACK PLATINUM", price: 1200, category: "трубочные", emoji: "💎", desc: "Платиновый" },
+            { id: 17, name: "МОНАРХ MONARCH", price: 1200, category: "трубочные", emoji: "👑", desc: "Королевский" },
+            { id: 18, name: "Трубочный МАК ТАБАК", price: 1000, category: "трубочные", emoji: "🚬", desc: "Классический" },
 
-            // АКСЕССУАРЫ - Гильзы
-            { id: 16, name: "Гильзы OCB 500 Black", price: 600, category: "аксессуары", emoji: "⚫", desc: "Премиум", badge: "NEW" },
-            { id: 17, name: "MASCOTTE X-Long", price: 350, category: "аксессуары", emoji: "📋", desc: "200 шт" },
-            { id: 18, name: "MASCOTTE Carbon", price: 400, category: "аксессуары", emoji: "🔘", desc: "200 шт" },
-            { id: 19, name: "MASCOTTE Classic", price: 300, category: "аксессуары", emoji: "⚪", desc: "200 шт" },
-            { id: 20, name: "American Aviator Slim", price: 200, category: "аксессуары", emoji: "✈️", desc: "XL 724мм" },
+            // 5. СИГАРЕТНЫЕ ГИЛЬЗЫ
+            { id: 19, name: "MASCOTTE X-Long", price: 350, category: "гильзы", emoji: "📋", desc: "200 шт" },
+            { id: 20, name: "MASCOTTE Carbon", price: 400, category: "гильзы", emoji: "🔘", desc: "200 шт с угольным фильтром" },
+            { id: 21, name: "MASCOTTE Classic", price: 300, category: "гильзы", emoji: "⚪", desc: "200 шт" },
+            { id: 22, name: "American Aviator Slim White", price: 200, category: "гильзы", emoji: "✈️", desc: "XL 724мм" },
 
-            // АКСЕССУАРЫ - Машинки
-            { id: 21, name: "Машинка LED 1", price: 3000, category: "аксессуары", emoji: "💡", desc: "Набивочная", badge: "NEW" },
-            { id: 22, name: "OCB EASY SLIDE", price: 4000, category: "аксессуары", emoji: "⚙️", desc: "Машинка набивочная" },
-            { id: 23, name: "INJECTORMATIC 2", price: 2500, category: "аксессуары", emoji: "🔧", desc: "Набивочная" },
-            { id: 24, name: "INJECTORMATIC 2 Silver", price: 2500, category: "аксессуары", emoji: "🔩", desc: "Серебро" },
+            // 6. СОБРАТЬ СВОЙ НАБОР
+            { id: 23, name: "КОФЕ", price: 800, category: "наборы", emoji: "☕", desc: "Собрать свой набор" },
+            { id: 24, name: "ЗВАР", price: 880, category: "наборы", emoji: "🍵", desc: "Собрать свой набор" },
+            { id: 25, name: "ХАЛФЗВАР", price: 880, category: "наборы", emoji: "🫖", desc: "Собрать свой набор" },
 
-            // АКСЕССУАРЫ - Другое
-            { id: 25, name: "Сумка MUXIANG №013", price: 4800, category: "аксессуары", emoji: "👜", desc: "Кожаная", badge: "NEW" },
-            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "аксессуары", emoji: "💰", desc: "Продукция МАКТАБАК" },
-            { id: 27, name: "Mac LUXURY", price: 1500, category: "аксессуары", emoji: "🏆", desc: "Продукция МАКТАБАК" },
-            { id: 28, name: "Портсигар X2", price: 1800, category: "аксессуары", emoji: "📦", desc: "Стильный" },
-            { id: 29, name: "Портсигар X3", price: 1800, category: "аксессуары", emoji: "📦", desc: "Стильный" },
-            { id: 30, name: "ТАМПЕР №1", price: 1500, category: "аксессуары", emoji: "🔨", desc: "Инструмент" },
+            // 7. ПРОДУКЦИЯ ОТ МАКТАБАК
+            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "luxury", emoji: "💰", desc: "Премиум линия" },
+            { id: 27, name: "Mac LUXURY", price: 1500, category: "luxury", emoji: "🏆", desc: "Премиум" },
+            { id: 28, name: "СТИЛЬНЫЙ ПОРТСИГАР-X2", price: 1800, category: "luxury", emoji: "📦", desc: "Элегантный" },
+            { id: 29, name: "СТИЛЬНЫЙ ПОРТСИГАР-X3", price: 1800, category: "luxury", emoji: "📦", desc: "Элегантный" },
 
-            // АКСЕССУАРЫ - Трубки
-            { id: 31, name: "Трубка MR Burning 220", price: 3500, category: "аксессуары", emoji: "🪈", desc: "Курительная" },
-            { id: 32, name: "MUXANG BRIAR №888", price: 8000, category: "аксессуары", emoji: "🪈", desc: "Премиум", badge: "VIP" },
-            { id: 33, name: "MR.BROG №63 Zurek", price: 2000, category: "аксессуары", emoji: "🪈", desc: "9мм груша" },
-            { id: 34, name: "MUXIANG BULLDOG", price: 5500, category: "аксессуары", emoji: "🪈", desc: "Трубка" },
+            // 8. КУРИТЕЛЬНЫЕ ТРУБКИ
+            { id: 30, name: "ТРУБКА MR Burning 220", price: 3500, category: "трубки", emoji: "🪈", desc: "Классическая" },
+            { id: 31, name: "MUXIANG BRIAR №888", price: 8000, category: "трубки", emoji: "🪈", desc: "Премиум", badge: "VIP" },
+            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "трубки", emoji: "🪈", desc: "9мм груша (фильтр)" },
+            { id: 33, name: "Трубка MUXIANG BULLDOG", price: 5500, category: "трубки", emoji: "🪈", desc: "Английская форма" },
 
-            // ТАБАК - Наборы
-            { id: 35, name: "КОФЕ набор", price: 800, category: "табак", emoji: "☕", desc: "Собрать свой набор" },
-            { id: 36, name: "ЗВАР набор", price: 880, category: "табак", emoji: "🍵", desc: "Собрать свой набор" },
-            { id: 37, name: "ХАЛФЗВАР набор", price: 880, category: "табак", emoji: "🫖", desc: "Собрать свой набор" },
+            // 9. МАШИНКИ ДЛЯ НАБИВКИ
+            { id: 34, name: "Машинка OCB EASY SLIDE", price: 4000, category: "машинки", emoji: "⚙️", desc: "Профессиональная" },
+            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "машинки", emoji: "🔧", desc: "Автоматическая" },
+            { id: 36, name: "МАШИНКА НАБИВОЧНАЯ LED", price: 3000, category: "машинки", emoji: "💡", desc: "С подсветкой" },
+            { id: 37, name: "INJECTORMATIC 2 серебро", price: 2500, category: "машинки", emoji: "🔩", desc: "Серебристая" },
 
-            // ЧАЙ
+            // 10. КИТАЙСКИЙ ЧАЙ
             { id: 38, name: "Шу пуэр 2017", price: 1000, category: "чай", emoji: "🍵", desc: "Линьцанское сырье" },
             { id: 39, name: "Да Хун Пао", price: 1800, category: "чай", emoji: "🍵", desc: "100г прессованный" },
             { id: 40, name: "Фуцзянь Хун Ча", price: 2300, category: "чай", emoji: "🍵", desc: "Красный чай 500г" },
-            { id: 41, name: "Шу пуэр Золотой павлин", price: 2200, category: "чай", emoji: "🍵", desc: "2012г, 357г" }
+            { id: 41, name: "Шу пуэр Золотой павлин", price: 2200, category: "чай", emoji: "🍵", desc: "2012г, блин 357г" },
+
+            // 11. ТАМПЕР
+            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "тампер", emoji: "🔨", desc: "Профессиональный инструмент" }
         ];
 
         let cart = JSON.parse(localStorage.getItem('cart')) || {};
