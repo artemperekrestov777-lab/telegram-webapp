@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MacTabak Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--tg-theme-bg-color, #f5f5f5);
+            color: var(--tg-theme-text-color, #000);
+            padding-bottom: 70px;
+        }
+
+        /* Шапка */
+        .header {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .search-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Категории с горизонтальной прокруткой */
+        .categories-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-right: 10px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-tab.active {
+            background: #333;
+            color: white;
+        }
+
+        /* Фильтры */
+        .filters {
+            background: white;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        /* Сетка товаров */
+        .products-grid {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Плавающая корзина */
+        .floating-cart {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .floating-cart .cart-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Модальное окно корзины */
+        .cart-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+            z-index: 300;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-modal.open {
+            transform: translateY(0);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .cart-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .clear-cart {
+            color: #ff4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-value {
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* Промокод */
+        .promo-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .promo-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .apply-promo {
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Итого */
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-row.final {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* Оверлей */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 250;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Поиск */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 400;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .search-modal.open {
+            transform: translateY(0);
+        }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .close-search {
+            padding: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .search-results {
+            padding: 15px;
+            overflow-y: auto;
+            max-height: calc(100vh - 70px);
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 150;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .nav-item.active {
+            color: #333;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">MacTabak</div>
+            <button class="search-btn" onclick="openSearch()">🔍</button>
+        </div>
+
+        <!-- Категории с горизонтальной прокруткой -->
+        <div class="categories-container" id="categoriesContainer">
+            <span class="category-tab active" data-category="all">Все товары</span>
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="setSort('default')">По умолчанию</button>
+        <button class="filter-btn" onclick="setSort('price-asc')">Цена ↑</button>
+        <button class="filter-btn" onclick="setSort('price-desc')">Цена ↓</button>
+        <button class="filter-btn" onclick="setSort('new')">Новинки</button>
+    </div>
+
+    <!-- Сетка товаров -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Плавающая корзина -->
+    <div class="floating-cart" onclick="openCart()">
+        <span class="cart-icon">🛒</span>
+        <span class="cart-count" id="cartCount" style="display: none;">0</span>
+    </div>
+
+    <!-- Корзина -->
+    <div class="overlay" id="overlay" onclick="closeCart()"></div>
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h2 class="cart-title">Корзина</h2>
+            <button class="clear-cart" onclick="clearCart()">Очистить</button>
+        </div>
+
+        <div id="cartItems"></div>
+
+        <div class="promo-section">
+            <input type="text" class="promo-input" id="promoInput" placeholder="Введите промокод">
+            <button class="apply-promo" onclick="applyPromo()">Применить промокод</button>
+        </div>
+
+        <div class="cart-total">
+            <div class="total-row">
+                <span>Товары:</span>
+                <span id="subtotal">0 ₽</span>
+            </div>
+            <div class="total-row" id="discountRow" style="display: none;">
+                <span>Скидка:</span>
+                <span id="discount">0 ₽</span>
+            </div>
+            <div class="total-row final">
+                <span>Итого:</span>
+                <span id="total">0 ₽</span>
+            </div>
+        </div>
+
+        <button class="checkout-btn" onclick="checkout()">Перейти к оформлению</button>
+    </div>
+
+    <!-- Поиск -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-header">
+            <input type="text" class="search-input" id="searchInput" placeholder="Поиск товаров..." oninput="searchProducts()">
+            <button class="close-search" onclick="closeSearch()">✕</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- Нижняя навигация -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📦</span>
+            <span class="nav-label">Заказы</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Профиль</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">ℹ️</span>
+            <span class="nav-label">О нас</span>
+        </div>
+    </div>
+
+    <script>
+        // Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Данные
+        const categories = {
+            "all": { name: "Все товары", icon: "📦" },
+            "new_mactabak": { name: "🆕 Новинки", icon: "🆕" },
+            "standard_blends": { name: "🚬 Стандартные", icon: "🚬" },
+            "aroma_blends": { name: "🌸 Ароматизированные", icon: "🌸" },
+            "pipe_blends": { name: "🚬 Трубочные", icon: "🚬" },
+            "cigarette_tubes": { name: "📦 Гильзы", icon: "📦" },
+            "custom_set": { name: "🎁 Наборы", icon: "🎁" },
+            "mactabak_products": { name: "⭐ МАКТАБАК", icon: "⭐" },
+            "smoking_pipes": { name: "🗿 Трубки", icon: "🗿" },
+            "filling_machines": { name: "⚙️ Машинки", icon: "⚙️" },
+            "chinese_tea": { name: "🍵 Чай", icon: "🍵" },
+            "tamper": { name: "🔨 Тампер", icon: "🔨" },
+            "accessories": { name: "🎯 Аксессуары", icon: "🎯" }
+        };
+
+        const products = [
+            // Новинки
+            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "new_mactabak", icon: "🔥", isNew: true },
+            { id: 2, name: "Зажигалка HONEST", price: 900, category: "new_mactabak", icon: "🔥", isNew: true },
+            { id: 3, name: "Премиум гильзы OCB 500", price: 600, category: "new_mactabak", icon: "📦", isNew: true },
+            { id: 4, name: "МАШИНКА НАБИВОЧНАЯ LED", price: 3000, category: "new_mactabak", icon: "⚙️", isNew: true },
+            { id: 5, name: "Сумка кожаная MUXIANG", price: 4800, category: "new_mactabak", icon: "👜", isNew: true },
+
+            // Стандартные бленды
+            { id: 6, name: "ШТОРМ Storm", price: 1700, category: "standard_blends", icon: "🌪" },
+            { id: 7, name: "ЛЕГЕНДА legend", price: 1700, category: "standard_blends", icon: "⭐" },
+            { id: 8, name: "КРАСНЫЙ ДРАКОН", price: 1700, category: "standard_blends", icon: "🐲" },
+            { id: 9, name: "МАРШАЛ MARSHAL", price: 1700, category: "standard_blends", icon: "🎖" },
+            { id: 10, name: "MAC - ВИНСТОН", price: 1950, category: "standard_blends", icon: "🚬" },
+
+            // Ароматизированные
+            { id: 11, name: "МАК МИКС", price: 2200, category: "aroma_blends", icon: "🌸" },
+            { id: 12, name: "БЛЕНД - ЮБИЛЕЙНЫЙ", price: 2200, category: "aroma_blends", icon: "🎉" },
+            { id: 13, name: "Х - БЛЕНД", price: 2200, category: "aroma_blends", icon: "✨" },
+            { id: 14, name: "КОФЕ coffee", price: 2200, category: "aroma_blends", icon: "☕" },
+
+            // Трубочные бленды
+            { id: 15, name: "CAPTAIN BLACK CREAM", price: 1200, category: "pipe_blends", icon: "🚬" },
+            { id: 16, name: "CAPTAIN BLACK PLATINUM", price: 1200, category: "pipe_blends", icon: "💎" },
+            { id: 17, name: "МОНАРХ MONARCH", price: 1200, category: "pipe_blends", icon: "👑" },
+            { id: 18, name: "ТРУБОЧНЫЙ МАК ТАБАК", price: 1000, category: "pipe_blends", icon: "🚬" },
+
+            // Гильзы
+            { id: 19, name: "Гильзы MASCOTTE X-Long", price: 350, category: "cigarette_tubes", icon: "📦" },
+            { id: 20, name: "Гильзы MASCOTTE Carbon", price: 400, category: "cigarette_tubes", icon: "📦" },
+            { id: 21, name: "Гильзы MASCOTTE Classic", price: 300, category: "cigarette_tubes", icon: "📦" },
+            { id: 22, name: "Гильзы American Aviator", price: 200, category: "cigarette_tubes", icon: "📦" },
+
+            // Наборы
+            { id: 23, name: "КОФЕ набор", price: 800, category: "custom_set", icon: "☕" },
+            { id: 24, name: "ЗВАР набор", price: 880, category: "custom_set", icon: "🎁" },
+            { id: 25, name: "ХАЛФЗВАР набор", price: 880, category: "custom_set", icon: "🎁" },
+
+            // МАКТАБАК продукция
+            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "mactabak_products", icon: "💎" },
+            { id: 27, name: "Mac LUXURY", price: 1500, category: "mactabak_products", icon: "💎" },
+            { id: 28, name: "ПОРТСИГАР Х2", price: 1800, category: "mactabak_products", icon: "📦" },
+            { id: 29, name: "ПОРТСИГАР Х3", price: 1800, category: "mactabak_products", icon: "📦" },
+
+            // Трубки
+            { id: 30, name: "ТРУБКА MR Burning", price: 3500, category: "smoking_pipes", icon: "🗿" },
+            { id: 31, name: "MUXANG BRIAR № 888", price: 8000, category: "smoking_pipes", icon: "🗿" },
+            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "smoking_pipes", icon: "🗿" },
+            { id: 33, name: "MUXIANG BULLDOG", price: 5500, category: "smoking_pipes", icon: "🗿" },
+
+            // Машинки
+            { id: 34, name: "OCB EASY SLIDE", price: 4000, category: "filling_machines", icon: "⚙️" },
+            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "filling_machines", icon: "⚙️" },
+            { id: 36, name: "НАБИВОЧНАЯ LED", price: 3000, category: "filling_machines", icon: "⚙️" },
+            { id: 37, name: "INJECTORMATIC серебро", price: 2500, category: "filling_machines", icon: "⚙️" },
+
+            // Чай
+            { id: 38, name: "Шу пуэр Линьцанский", price: 1000, category: "chinese_tea", icon: "🍵" },
+            { id: 39, name: "Улун Да Хун Пао", price: 1800, category: "chinese_tea", icon: "🍵" },
+            { id: 40, name: "Фуцзянь Хун Ча 500г", price: 2300, category: "chinese_tea", icon: "🍵" },
+            { id: 41, name: "Шу пуэр Золотой павлин", price: 2200, category: "chinese_tea", icon: "🍵" },
+
+            // Тампер
+            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "tamper", icon: "🔨" }
+        ];
+
+        let cart = {};
+        let currentCategory = 'all';
+        let currentSort = 'default';
+        let promoDiscount = 0;
+
+        // Инициализация
+        function init() {
+            renderCategories();
+            renderProducts();
+            updateCartCount();
+        }
+
+        // Рендер категорий
+        function renderCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            for (const [key, cat] of Object.entries(categories)) {
+                const tab = document.createElement('span');
+                tab.className = 'category-tab';
+                if (key === currentCategory) tab.classList.add('active');
+                tab.setAttribute('data-category', key);
+                tab.textContent = cat.name;
+                tab.onclick = () => selectCategory(key);
+                container.appendChild(tab);
+            }
+        }
+
+        // Выбор категории
+        function selectCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-category') === category);
+            });
+            renderProducts();
+        }
+
+        // Рендер товаров
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            let filteredProducts = currentCategory === 'all'
+                ? products
+                : products.filter(p => p.category === currentCategory);
+
+            // Сортировка
+            if (currentSort === 'price-asc') {
+                filteredProducts.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filteredProducts.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'new') {
+                filteredProducts = filteredProducts.filter(p => p.isNew);
+            }
+
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                            В корзину
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Сортировка
+        function setSort(sort) {
+            currentSort = sort;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderProducts();
+        }
+
+        // Добавление в корзину
+        function addToCart(productId) {
+            if (!cart[productId]) {
+                cart[productId] = 0;
+            }
+            cart[productId]++;
+            updateCartCount();
+
+            // Анимация
+            const btn = event.target;
+            btn.textContent = '✓ Добавлено';
+            btn.style.background = '#4CAF50';
+            setTimeout(() => {
+                btn.textContent = 'В корзину';
+                btn.style.background = '#333';
+            }, 1000);
+        }
+
+        // Обновление счетчика корзины
+        function updateCartCount() {
+            const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            const countEl = document.getElementById('cartCount');
+            if (count > 0) {
+                countEl.textContent = count;
+                countEl.style.display = 'flex';
+            } else {
+                countEl.style.display = 'none';
+            }
+        }
+
+        // Открытие корзины
+        function openCart() {
+            renderCartItems();
+            document.getElementById('cartModal').classList.add('open');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        // Закрытие корзины
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // Рендер товаров в корзине
+        function renderCartItems() {
+            const container = document.getElementById('cartItems');
+
+            if (Object.keys(cart).length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">Корзина пуста</p>';
+                updateTotal();
+                return;
+            }
+
+            container.innerHTML = Object.entries(cart).map(([productId, quantity]) => {
+                const product = products.find(p => p.id === parseInt(productId));
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-image">${product.icon}</div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${product.name}</div>
+                            <div class="cart-item-price">${product.price} ₽</div>
+                            <div class="quantity-control">
+                                <button class="qty-btn" onclick="updateQuantity(${productId}, -1)">−</button>
+                                <span class="qty-value">${quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${productId}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateTotal();
+        }
+
+        // Изменение количества
+        function updateQuantity(productId, change) {
+            cart[productId] += change;
+            if (cart[productId] <= 0) {
+                delete cart[productId];
+            }
+            renderCartItems();
+            updateCartCount();
+        }
+
+        // Очистка корзины
+        function clearCart() {
+            if (confirm('Очистить корзину?')) {
+                cart = {};
+                renderCartItems();
+                updateCartCount();
+            }
+        }
+
+        // Обновление итоговой суммы
+        function updateTotal() {
+            let subtotal = 0;
+            for (const [productId, quantity] of Object.entries(cart)) {
+                const product = products.find(p => p.id === parseInt(productId));
+                subtotal += product.price * quantity;
+            }
+
+            const discount = Math.floor(subtotal * promoDiscount);
+            const total = subtotal - discount;
+
+            document.getElementById('subtotal').textContent = `${subtotal} ₽`;
+            document.getElementById('discount').textContent = `-${discount} ₽`;
+            document.getElementById('total').textContent = `${total} ₽`;
+
+            document.getElementById('discountRow').style.display = promoDiscount > 0 ? 'flex' : 'none';
+        }
+
+        // Применение промокода
+        function applyPromo() {
+            const code = document.getElementById('promoInput').value.toUpperCase();
+
+            // Примеры промокодов
+            const promoCodes = {
+                'WELCOME10': 0.1,
+                'SALE20': 0.2,
+                'VIP30': 0.3
+            };
+
+            if (promoCodes[code]) {
+                promoDiscount = promoCodes[code];
+                alert(`Промокод применен! Скидка ${promoDiscount * 100}%`);
+                updateTotal();
+            } else {
+                alert('Неверный промокод');
+            }
+        }
+
+        // Оформление заказа
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                alert('Корзина пуста');
+                return;
+            }
+
+            let orderData = {
+                items: [],
+                total: 0
+            };
+
+            for (const [productId, quantity] of Object.entries(cart)) {
+                const product = products.find(p => p.id === parseInt(productId));
+                orderData.items.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: quantity
+                });
+                orderData.total += product.price * quantity;
+            }
+
+            orderData.total = orderData.total * (1 - promoDiscount);
+
+            // Отправка данных в бот
+            tg.sendData(JSON.stringify(orderData));
+        }
+
+        // Поиск
+        function openSearch() {
+            document.getElementById('searchModal').classList.add('open');
+            document.getElementById('searchInput').focus();
+        }
+
+        function closeSearch() {
+            document.getElementById('searchModal').classList.remove('open');
+            document.getElementById('searchInput').value = '';
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const results = document.getElementById('searchResults');
+
+            if (query.length < 2) {
+                results.innerHTML = '';
+                return;
+            }
+
+            const filtered = products.filter(p =>
+                p.name.toLowerCase().includes(query)
+            );
+
+            results.innerHTML = filtered.map(product => `
+                <div class="product-card" onclick="closeSearch(); addToCart(${product.id})">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Запуск
+        init();
+    </script>
+</body>
+</html>
