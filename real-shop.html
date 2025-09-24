@@ -37,26 +37,38 @@
 
         .categories {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            padding-bottom: 5px;
+            padding: 5px 0 10px 0;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         .categories::-webkit-scrollbar {
-            display: none;
+            height: 4px;
+        }
+
+        .categories::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
         }
 
         .category-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #ecf0f1;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
             white-space: nowrap;
             font-weight: 500;
             transition: all 0.3s;
-            font-size: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
         }
 
         .category-btn.active {
@@ -391,16 +403,9 @@
     <div class="header">
         <div class="logo">🚬 MacTabak</div>
         <div class="categories">
-            <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
-            <button class="category-btn" onclick="filterCategory('новинки')">Новинки</button>
-            <button class="category-btn" onclick="filterCategory('стандарт')">Стандартные</button>
-            <button class="category-btn" onclick="filterCategory('аромат')">Ароматизир.</button>
-            <button class="category-btn" onclick="filterCategory('трубочный')">Трубочные</button>
-            <button class="category-btn" onclick="filterCategory('гильзы')">Гильзы</button>
-            <button class="category-btn" onclick="filterCategory('набор')">Наборы</button>
-            <button class="category-btn" onclick="filterCategory('luxury')">Luxury</button>
-            <button class="category-btn" onclick="filterCategory('трубки')">Трубки</button>
-            <button class="category-btn" onclick="filterCategory('машинки')">Машинки</button>
+            <button class="category-btn active" onclick="filterCategory('all')">Все</button>
+            <button class="category-btn" onclick="filterCategory('табак')">Табак</button>
+            <button class="category-btn" onclick="filterCategory('аксессуары')">Аксессуары</button>
             <button class="category-btn" onclick="filterCategory('чай')">Чай</button>
         </div>
     </div>
@@ -454,69 +459,69 @@
 
         // РЕАЛЬНАЯ БАЗА ТОВАРОВ ИЗ ТЗ
         const products = [
-            // НОВИНКИ
-            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "новинки", desc: "Для трубки", badge: "NEW" },
-            { id: 2, name: "Зажигалка HONEST", price: 900, category: "новинки", desc: "Копия 4281" },
-            { id: 3, name: "Премиум гильзы OCB 500", price: 600, category: "новинки", desc: "Black" },
-            { id: 4, name: "Машинка набивочная LED 1", price: 3000, category: "новинки", desc: "Автоматическая" },
-            { id: 5, name: "Сумка кожаная MUXIANG", price: 4800, category: "новинки", desc: "№013 (1099)" },
+            // ТАБАК - СТАНДАРТНЫЕ БЛЕНДЫ
+            { id: 6, name: "ШТОРМ Storm", price: 1700, category: "табак", desc: "Классический" },
+            { id: 7, name: "ЛЕГЕНДА Legend", price: 1700, category: "табак", desc: "Премиум" },
+            { id: 8, name: "КРАСНЫЙ ДРАКОН", price: 1700, category: "табак", desc: "Red Dragon" },
+            { id: 9, name: "МАРШАЛ Marshal", price: 1700, category: "табак", desc: "Крепкий" },
+            { id: 10, name: "MAC-ВИНСТОН Winston", price: 1950, category: "табак", desc: "Экстра", badge: "TOP" },
 
-            // СТАНДАРТНЫЕ БЛЕНДЫ
-            { id: 6, name: "ШТОРМ Storm", price: 1700, category: "стандарт", desc: "Классический" },
-            { id: 7, name: "ЛЕГЕНДА Legend", price: 1700, category: "стандарт", desc: "Премиум" },
-            { id: 8, name: "КРАСНЫЙ ДРАКОН", price: 1700, category: "стандарт", desc: "Red Dragon" },
-            { id: 9, name: "МАРШАЛ Marshal", price: 1700, category: "стандарт", desc: "Крепкий" },
-            { id: 10, name: "MAC-ВИНСТОН Winston", price: 1950, category: "стандарт", desc: "Экстра", badge: "TOP" },
+            // ТАБАК - АРОМАТИЗИРОВАННЫЕ
+            { id: 11, name: "МАК МИКС", price: 2200, category: "табак", desc: "Фруктовый микс" },
+            { id: 12, name: "БЛЕНД ЮБИЛЕЙНЫЙ", price: 2200, category: "табак", desc: "Специальный" },
+            { id: 13, name: "X-БЛЕНД", price: 2200, category: "табак", desc: "Экзотический" },
+            { id: 14, name: "КОФЕ Coffee", price: 2200, category: "табак", desc: "Арабика" },
 
-            // АРОМАТИЗИРОВАННЫЕ
-            { id: 11, name: "МАК МИКС", price: 2200, category: "аромат", desc: "Фруктовый микс" },
-            { id: 12, name: "БЛЕНД ЮБИЛЕЙНЫЙ", price: 2200, category: "аромат", desc: "Специальный" },
-            { id: 13, name: "X-БЛЕНД", price: 2200, category: "аромат", desc: "Экзотический" },
-            { id: 14, name: "КОФЕ Coffee", price: 2200, category: "аромат", desc: "Арабика" },
+            // ТАБАК - ТРУБОЧНЫЕ БЛЕНДЫ
+            { id: 15, name: "CAPTAIN BLACK CREAM", price: 1200, category: "табак", desc: "Кремовый" },
+            { id: 16, name: "CAPTAIN BLACK PLATINUM", price: 1200, category: "табак", desc: "Платиновый" },
+            { id: 17, name: "МОНАРХ Monarch", price: 1200, category: "табак", desc: "Королевский" },
+            { id: 18, name: "Трубочный МАК ТАБАК", price: 1000, category: "табак", desc: "Классика" },
 
-            // ТРУБОЧНЫЕ БЛЕНДЫ
-            { id: 15, name: "CAPTAIN BLACK CREAM", price: 1200, category: "трубочный", desc: "Кремовый" },
-            { id: 16, name: "CAPTAIN BLACK PLATINUM", price: 1200, category: "трубочный", desc: "Платиновый" },
-            { id: 17, name: "МОНАРХ Monarch", price: 1200, category: "трубочный", desc: "Королевский" },
-            { id: 18, name: "Трубочный МАК ТАБАК", price: 1000, category: "трубочный", desc: "Классика" },
+            // ТАБАК - НАБОРЫ
+            { id: 23, name: "КОФЕ набор", price: 800, category: "табак", desc: "Сборный" },
+            { id: 24, name: "ЗВАР набор", price: 880, category: "табак", desc: "Сборный" },
+            { id: 25, name: "ХАЛФЗВАР набор", price: 880, category: "табак", desc: "Сборный" },
 
-            // ГИЛЬЗЫ
-            { id: 19, name: "MASCOTTE X-Long", price: 350, category: "гильзы", desc: "200 шт" },
-            { id: 20, name: "MASCOTTE Carbon", price: 400, category: "гильзы", desc: "200 шт" },
-            { id: 21, name: "MASCOTTE Classic", price: 300, category: "гильзы", desc: "200 шт" },
-            { id: 22, name: "American Aviator Slim", price: 200, category: "гильзы", desc: "XL 724мм" },
+            // ТАБАК - LUXURY
+            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "табак", desc: "Премиум линия" },
+            { id: 27, name: "Mac LUXURY", price: 1500, category: "табак", desc: "Премиум" },
 
-            // СОБРАТЬ НАБОР
-            { id: 23, name: "КОФЕ набор", price: 800, category: "набор", desc: "Сборный" },
-            { id: 24, name: "ЗВАР набор", price: 880, category: "набор", desc: "Сборный" },
-            { id: 25, name: "ХАЛФЗВАР набор", price: 880, category: "набор", desc: "Сборный" },
+            // АКСЕССУАРЫ - ЗАЖИГАЛКИ
+            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "аксессуары", desc: "Для трубки", badge: "NEW" },
+            { id: 2, name: "Зажигалка HONEST", price: 900, category: "аксессуары", desc: "Копия 4281" },
 
-            // LUXURY
-            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "luxury", desc: "Премиум линия" },
-            { id: 27, name: "Mac LUXURY", price: 1500, category: "luxury", desc: "Премиум" },
-            { id: 28, name: "Портсигар X2", price: 1800, category: "luxury", desc: "Стильный" },
-            { id: 29, name: "Портсигар X3", price: 1800, category: "luxury", desc: "Стильный" },
+            // АКСЕССУАРЫ - ГИЛЬЗЫ
+            { id: 3, name: "Премиум гильзы OCB 500", price: 600, category: "аксессуары", desc: "Black" },
+            { id: 19, name: "MASCOTTE X-Long", price: 350, category: "аксессуары", desc: "200 шт" },
+            { id: 20, name: "MASCOTTE Carbon", price: 400, category: "аксессуары", desc: "200 шт" },
+            { id: 21, name: "MASCOTTE Classic", price: 300, category: "аксессуары", desc: "200 шт" },
+            { id: 22, name: "American Aviator Slim", price: 200, category: "аксессуары", desc: "XL 724мм" },
 
-            // ТРУБКИ
-            { id: 30, name: "Трубка MR Burning 220", price: 3500, category: "трубки", desc: "Классика" },
-            { id: 31, name: "MUXANG BRIAR №888", price: 8000, category: "трубки", desc: "Премиум", badge: "VIP" },
-            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "трубки", desc: "9мм груша" },
-            { id: 33, name: "MUXIANG BULLDOG", price: 5500, category: "трубки", desc: "Английская" },
+            // АКСЕССУАРЫ - МАШИНКИ
+            { id: 4, name: "Машинка набивочная LED 1", price: 3000, category: "аксессуары", desc: "Автоматическая" },
+            { id: 34, name: "OCB EASY SLIDE", price: 4000, category: "аксессуары", desc: "Профессиональная" },
+            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "аксессуары", desc: "Автомат" },
+            { id: 36, name: "Набивочная LED", price: 3000, category: "аксессуары", desc: "С подсветкой" },
+            { id: 37, name: "INJECTORMATIC 2", price: 2500, category: "аксессуары", desc: "Серебро" },
 
-            // МАШИНКИ
-            { id: 34, name: "OCB EASY SLIDE", price: 4000, category: "машинки", desc: "Профессиональная" },
-            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "машинки", desc: "Автомат" },
-            { id: 36, name: "Набивочная LED", price: 3000, category: "машинки", desc: "С подсветкой" },
-            { id: 37, name: "INJECTORMATIC 2", price: 2500, category: "машинки", desc: "Серебро" },
+            // АКСЕССУАРЫ - ТРУБКИ
+            { id: 30, name: "Трубка MR Burning 220", price: 3500, category: "аксессуары", desc: "Классика" },
+            { id: 31, name: "MUXANG BRIAR №888", price: 8000, category: "аксессуары", desc: "Премиум", badge: "VIP" },
+            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "аксессуары", desc: "9мм груша" },
+            { id: 33, name: "MUXIANG BULLDOG", price: 5500, category: "аксессуары", desc: "Английская" },
+
+            // АКСЕССУАРЫ - ДРУГОЕ
+            { id: 5, name: "Сумка кожаная MUXIANG", price: 4800, category: "аксессуары", desc: "№013 (1099)" },
+            { id: 28, name: "Портсигар X2", price: 1800, category: "аксессуары", desc: "Стильный" },
+            { id: 29, name: "Портсигар X3", price: 1800, category: "аксессуары", desc: "Стильный" },
+            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "аксессуары", desc: "Профессиональный" },
 
             // ЧАЙ
             { id: 38, name: "Шу пуэр 2017", price: 1000, category: "чай", desc: "Линьцанское сырье" },
             { id: 39, name: "Да Хун Пао", price: 1800, category: "чай", desc: "100г прессованный" },
             { id: 40, name: "Фуцзянь Хун Ча", price: 2300, category: "чай", desc: "Красный 500г" },
-            { id: 41, name: "Шу пуэр Золотой павлин", price: 2200, category: "чай", desc: "2012г, 357г" },
-
-            // ТАМПЕР
-            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "новинки", desc: "Профессиональный" }
+            { id: 41, name: "Шу пуэр Золотой павлин", price: 2200, category: "чай", desc: "2012г, 357г" }
         ];
 
         let cart = JSON.parse(localStorage.getItem('mactabak_cart')) || {};
