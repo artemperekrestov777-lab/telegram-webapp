@@ -204,60 +204,106 @@
             font-weight: bold;
         }
 
-        .cart-modal {
+        .cart-modal, .checkout-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1000;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .cart-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background: white;
-            border-radius: 25px 25px 0 0;
-            padding: 25px;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s;
+            z-index: 1000;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        .cart-screen, .checkout-screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #f8f8f8;
         }
 
-        .cart-header {
+        .cart-header, .checkout-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            padding: 15px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .cart-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
+        .cart-title, .checkout-title {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
         }
 
-        .close-btn {
+        .back-btn {
             background: none;
             border: none;
-            font-size: 28px;
-            color: #95a5a6;
+            font-size: 24px;
             cursor: pointer;
+            padding: 5px;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin: 20px 0 10px 0;
+        }
+
+        .payment-option, .payment-method {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .checkout-step {
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .summary-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
         }
 
         .cart-item {
@@ -417,11 +463,11 @@
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active">
+        <div class="nav-item active" onclick="showHome()">
             <div class="nav-icon">🏠</div>
             <div>Главная</div>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="showSearch()">
             <div class="nav-icon">🔍</div>
             <div>Поиск</div>
         </div>
@@ -432,20 +478,106 @@
             </div>
             <div>Корзина</div>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="showProfile()">
             <div class="nav-icon">👤</div>
             <div>Профиль</div>
         </div>
     </div>
 
-    <div class="cart-modal" id="cartModal">
-        <div class="cart-content">
+    <!-- Экран корзины -->
+    <div class="cart-modal" id="cartModal" style="display: none;">
+        <div class="cart-screen">
             <div class="cart-header">
+                <button class="back-btn" onclick="closeCart()">←</button>
                 <div class="cart-title">Корзина</div>
-                <button class="close-btn" onclick="closeCart()">✕</button>
+                <button class="clear-btn" onclick="clearCart()">Очистить</button>
             </div>
             <div id="cartItems"></div>
             <div id="cartSummary"></div>
+        </div>
+    </div>
+
+    <!-- Экран оформления заказа -->
+    <div class="checkout-modal" id="checkoutModal" style="display: none;">
+        <div class="checkout-screen">
+            <div class="checkout-header">
+                <button class="back-btn" onclick="backToCart()">←</button>
+                <div class="checkout-title">Оформление заказа</div>
+            </div>
+
+            <!-- Шаг 1: Адрес доставки -->
+            <div id="deliveryStep" class="checkout-step" style="display: block;">
+                <div class="section-title">Адрес доставки</div>
+                <input type="text" id="deliveryAddress" placeholder="Россия, Москва, улица Садовники, 11А" class="input-field">
+
+                <div class="section-title">Способ оплаты</div>
+                <div class="payment-option" onclick="selectPayment('online')">
+                    <span>Оплата онлайн</span>
+                    <span>→</span>
+                </div>
+
+                <div class="section-title">Примечание к заказу</div>
+                <textarea id="orderComment" placeholder="Комментарий к заказу" class="input-field" rows="3"></textarea>
+
+                <div class="promo-section">
+                    <input type="text" id="promoCode" placeholder="Промокод" class="input-field">
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-row">
+                        <span>Товары (1)</span>
+                        <span id="summaryProducts">10 500 ₽</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Доставка</span>
+                        <span id="summaryDelivery">500 ₽</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Итого</span>
+                        <span id="summaryTotal">11 000 ₽</span>
+                    </div>
+                </div>
+
+                <button class="checkout-btn" onclick="proceedToPayment()">Оплатить • <span id="totalAmount">11 000</span> ₽</button>
+            </div>
+
+            <!-- Шаг 2: Информация о доставке -->
+            <div id="infoStep" class="checkout-step" style="display: none;">
+                <div class="section-title">Просмотр и оплата</div>
+
+                <div class="info-section">
+                    <div class="info-title">Информация о доставке</div>
+                    <div class="info-item">
+                        <span id="customerName">Имя Фамилия</span>
+                        <span id="customerPhone">+7 999 888 99 88</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-title">Доставка</div>
+                    <div class="info-item" id="deliveryInfo">
+                        Россия, Москва, улица Садовники, 11А
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-title">Доставим <span id="deliveryDate">30 сентября</span></div>
+                    <div class="product-info" id="orderProducts"></div>
+                </div>
+
+                <div class="payment-section">
+                    <div class="section-title">Способ оплаты</div>
+                    <div class="payment-method" onclick="showPaymentOptions()">
+                        <span>Оплата онлайн</span>
+                        <span>→</span>
+                    </div>
+                </div>
+
+                <div class="section-title">Примечание к заказу</div>
+                <div class="comment-text" id="orderCommentDisplay"></div>
+
+                <button class="checkout-btn" onclick="confirmOrder()">Оплатить • <span id="finalAmount">11 000</span> ₽</button>
+            </div>
         </div>
     </div>
 
@@ -735,6 +867,91 @@
             if (event.target == document.getElementById('cartModal')) {
                 closeCart();
             }
+        }
+
+        // Функции навигации
+        function showHome() {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            displayProducts(currentCategory);
+        }
+
+        function showSearch() {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            // Здесь можно добавить поисковый экран
+            alert('Поиск товаров');
+        }
+
+        function showProfile() {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            // Здесь можно добавить экран профиля
+            alert('Профиль пользователя');
+        }
+
+        // Функция очистки корзины
+        function clearCart() {
+            if (confirm('Очистить корзину?')) {
+                cart = {};
+                saveCart();
+                updateCartBadge();
+                displayCartItems();
+            }
+        }
+
+        // Переход к оплате
+        function proceedToPayment() {
+            document.getElementById('cartModal').style.display = 'none';
+            document.getElementById('checkoutModal').style.display = 'block';
+        }
+
+        // Возврат к корзине
+        function backToCart() {
+            document.getElementById('checkoutModal').style.display = 'none';
+            document.getElementById('cartModal').style.display = 'block';
+        }
+
+        // Подтверждение заказа
+        function confirmOrder() {
+            const orderData = {
+                action: 'order',
+                items: Object.entries(cart).map(([productId, quantity]) => {
+                    const product = products.find(p => p.id == productId);
+                    return {
+                        name: product.name,
+                        price: product.price,
+                        quantity: quantity
+                    };
+                }),
+                address: document.getElementById('deliveryAddress').value,
+                comment: document.getElementById('orderComment').value,
+                promo: document.getElementById('promoCode').value,
+                total: calculateTotal()
+            };
+
+            if (tg) {
+                tg.sendData(JSON.stringify(orderData));
+                tg.close();
+            } else {
+                alert('Заказ оформлен!');
+                cart = {};
+                saveCart();
+                updateCartBadge();
+                document.getElementById('checkoutModal').style.display = 'none';
+            }
+        }
+
+        // Функция расчета общей суммы
+        function calculateTotal() {
+            let total = 0;
+            Object.entries(cart).forEach(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    total += product.price * quantity;
+                }
+            });
+            return total;
         }
 
         // Инициализация
