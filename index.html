@@ -874,34 +874,6 @@
             }
         }
 
-        // Оформление заказа
-        function checkout() {
-            if (Object.keys(cart).length === 0) {
-                alert('Корзина пуста');
-                return;
-            }
-
-            let orderData = {
-                items: [],
-                total: 0
-            };
-
-            for (const [productId, quantity] of Object.entries(cart)) {
-                const product = products.find(p => p.id === parseInt(productId));
-                orderData.items.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: quantity
-                });
-                orderData.total += product.price * quantity;
-            }
-
-            orderData.total = orderData.total * (1 - promoDiscount);
-
-            // Отправка данных в бот
-            tg.sendData(JSON.stringify(orderData));
-        }
 
         // Поиск
         function openSearch() {
@@ -938,32 +910,49 @@
             `).join('');
         }
 
-        // Функция оформления заказа
-        function checkout() {
+        // Функция оформления заказа - делаем глобальной
+        window.checkout = function() {
             if (Object.keys(cart).length === 0) {
-                alert('Корзина пуста!');
+                const tg = window.Telegram?.WebApp;
+                if (tg) {
+                    tg.showAlert('Корзина пуста!');
+                } else {
+                    alert('Корзина пуста!');
+                }
                 return;
             }
 
             const total = calculateTotal();
             const tg = window.Telegram?.WebApp;
 
-            if (tg) {
-                const orderData = {
-                    items: Object.entries(cart).map(([id, quantity]) => {
-                        const product = products.find(p => p.id == id);
-                        return {
-                            name: product.name,
-                            quantity: quantity,
-                            price: product.price
-                        };
-                    }),
-                    total: total
-                };
-                tg.sendData(JSON.stringify(orderData));
+            const orderData = {
+                items: Object.entries(cart).map(([id, quantity]) => {
+                    const product = products.find(p => p.id == id);
+                    return {
+                        id: product.id,
+                        name: product.name,
+                        quantity: quantity,
+                        price: product.price
+                    };
+                }),
+                total: total,
+                user: tg?.initDataUnsafe?.user
+            };
+
+            if (tg && tg.sendData) {
+                // Отправляем данные боту
+                tg.MainButton.setText(`Оплатить ${total} ₽`);
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.sendData(JSON.stringify(orderData));
+                    tg.close();
+                });
             } else {
-                alert(`Заказ на сумму ${total} ₽ отправлен!`);
+                // Для тестирования вне Telegram
+                console.log('Заказ:', orderData);
+                alert(`Заказ на сумму ${total} ₽ отправлен!\n\nТовары:\n${orderData.items.map(item => `${item.name} x${item.quantity}`).join('\n')}`);
                 emptyCart();
+                closeCart();
             }
         }
 
