@@ -985,8 +985,12 @@
 
                 console.log('Order data:', orderData);
 
-                // Показываем главную кнопку
+                // Показываем главную кнопку с правильным цветом
                 tg.MainButton.text = `Оплатить ${total} ₽`;
+                tg.MainButton.color = '#2ecc71'; // Зелёный цвет
+                tg.MainButton.textColor = '#ffffff';
+                tg.MainButton.isActive = true;
+                tg.MainButton.isVisible = true;
                 tg.MainButton.show();
 
                 // Убираем старые обработчики и добавляем новый
@@ -996,7 +1000,14 @@
 
                 tg.MainButton.onClick(function() {
                     console.log('Sending data to bot...');
+                    // Отправляем данные боту
                     tg.sendData(JSON.stringify(orderData));
+                    // Показываем, что заказ отправлен
+                    tg.showAlert('Заказ отправлен! Ожидайте подтверждения.');
+                    // Очищаем корзину
+                    emptyCart();
+                    // Скрываем кнопку
+                    tg.MainButton.hide();
                 });
 
                 // Уведомление пользователю
