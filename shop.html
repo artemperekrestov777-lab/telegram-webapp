@@ -968,9 +968,59 @@
                 // Работа с Telegram
                 console.log('MainButton:', tg.MainButton);
 
-                // Запрашиваем данные доставки
-                const city = prompt('Введите город доставки:');
-                if (!city) return;
+                // Для Telegram отправляем заказ сразу, бот запросит данные доставки
+                if (tg && tg.sendData) {
+                    const orderData = {
+                        items: Object.entries(cart).map(([id, quantity]) => {
+                            const product = products.find(p => p.id == id);
+                            return {
+                                id: product.id,
+                                name: product.name,
+                                quantity: quantity,
+                                price: product.price
+                            };
+                        }),
+                        subtotal: total,
+                        needDeliveryInfo: true, // Флаг что нужна информация о доставке
+                        user: tg.initDataUnsafe?.user || {},
+                        orderNumber: Math.floor(10000 + Math.random() * 90000)
+                    };
+
+                    // Показываем кнопку отправки заказа
+                    tg.MainButton.text = `Оформить заказ ${total} ₽`;
+                    tg.MainButton.color = '#2ecc71';
+                    tg.MainButton.textColor = '#ffffff';
+                    tg.MainButton.show();
+
+                    if (tg.MainButton.offClick) {
+                        tg.MainButton.offClick();
+                    }
+
+                    tg.MainButton.onClick(function() {
+                        tg.sendData(JSON.stringify(orderData));
+                        if (tg.showAlert) {
+                            tg.showAlert('Заказ отправлен! Бот запросит у вас данные для доставки.');
+                        }
+                        emptyCart();
+                        tg.MainButton.hide();
+                    });
+
+                    if (tg.showAlert) {
+                        tg.showAlert(`Заказ на ${total} ₽\n\nНажмите кнопку внизу для отправки.\nБот запросит у вас город и адрес доставки.`);
+                    }
+
+                    return;
+                }
+
+                // Фоллбэк для браузера (оставляем для тестирования)
+                let city = '';
+                while (!city || city.trim() === '') {
+                    city = prompt('Введите город доставки:');
+                    if (city === null) return; // Пользователь нажал Отмена
+                    if (!city || city.trim() === '') {
+                        alert('⚠️ Пожалуйста, введите город доставки');
+                    }
+                }
 
                 const isMoscow = city.toLowerCase().includes('москв');
                 let deliveryType = null;
@@ -978,19 +1028,23 @@
 
                 if (!isMoscow) {
                     // Выбор способа доставки для регионов
-                    const deliveryChoice = prompt('Выберите способ доставки:\n\n1 - СДЭК (500₽)\n2 - Почта России (600₽)\n\nВведите 1 или 2:');
+                    let validChoice = false;
+                    while (!validChoice) {
+                        const deliveryChoice = prompt('Выберите способ доставки:\n\n1 - СДЭК (500₽)\n2 - Почта России (600₽)\n\nВведите 1 или 2:');
 
-                    if (!deliveryChoice) return;
+                        if (deliveryChoice === null) return; // Пользователь нажал Отмена
 
-                    if (deliveryChoice === '1') {
-                        deliveryType = 'СДЭК';
-                        deliveryCost = 500;
-                    } else if (deliveryChoice === '2') {
-                        deliveryType = 'Почта России';
-                        deliveryCost = 600;
-                    } else {
-                        alert('Неверный выбор. Попробуйте снова.');
-                        return;
+                        if (deliveryChoice === '1') {
+                            deliveryType = 'СДЭК';
+                            deliveryCost = 500;
+                            validChoice = true;
+                        } else if (deliveryChoice === '2') {
+                            deliveryType = 'Почта России';
+                            deliveryCost = 600;
+                            validChoice = true;
+                        } else {
+                            alert('⚠️ Пожалуйста, введите 1 или 2');
+                        }
                     }
                 } else {
                     // Для Москвы и МО - перевод на менеджера
@@ -998,11 +1052,23 @@
                     deliveryCost = 0; // Уточняется с менеджером
                 }
 
-                const address = prompt('Введите адрес доставки (улица, дом, квартира):');
-                if (!address) return;
+                let address = '';
+                while (!address || address.trim() === '') {
+                    address = prompt('Введите адрес доставки (улица, дом, квартира):');
+                    if (address === null) return; // Пользователь нажал Отмена
+                    if (!address || address.trim() === '') {
+                        alert('⚠️ Пожалуйста, введите адрес доставки');
+                    }
+                }
 
-                const phone = prompt('Введите телефон для связи:');
-                if (!phone) return;
+                let phone = '';
+                while (!phone || phone.trim() === '') {
+                    phone = prompt('Введите телефон для связи:');
+                    if (phone === null) return; // Пользователь нажал Отмена
+                    if (!phone || phone.trim() === '') {
+                        alert('⚠️ Пожалуйста, введите телефон для связи');
+                    }
+                }
 
                 // Обновляем итоговую сумму с доставкой
                 const totalWithDelivery = total + deliveryCost;
