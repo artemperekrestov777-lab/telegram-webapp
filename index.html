@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MacTabak Shop</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js?v=2"></script>
     <style>
         * {
             margin: 0;
@@ -504,7 +507,7 @@
     <div class="cart-modal" id="cartModal">
         <div class="cart-header">
             <h2 class="cart-title">Корзина</h2>
-            <button class="clear-cart" onclick="clearCart()">Очистить</button>
+            <button class="clear-cart" onclick="emptyCart()">Очистить</button>
         </div>
 
         <div id="cartItems"></div>
@@ -819,12 +822,18 @@
             updateCartCount();
         }
 
-        // Очистка корзины
-        function clearCart() {
+        // Очистка корзины БЕЗ подтверждения
+        function emptyCart() {
             cart = {};
             renderCartItems();
             updateCartCount();
             updateTotal();
+            closeCart();
+        }
+
+        // Старая функция для совместимости
+        function clearCart() {
+            emptyCart();
         }
 
         // Обновление итоговой суммы
@@ -954,7 +963,7 @@
                 tg.sendData(JSON.stringify(orderData));
             } else {
                 alert(`Заказ на сумму ${total} ₽ отправлен!`);
-                clearCart();
+                emptyCart();
             }
         }
 
