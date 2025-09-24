@@ -944,8 +944,8 @@
                     return;
                 }
 
-                const total = calculateTotal();
-                console.log('Total:', total);
+                let total = calculateTotal();
+                console.log('Total before delivery:', total);
 
                 const tg = window.Telegram?.WebApp;
                 console.log('Telegram WebApp:', tg);
@@ -968,6 +968,34 @@
                 // Работа с Telegram
                 console.log('MainButton:', tg.MainButton);
 
+                // Запрашиваем данные доставки
+                const city = prompt('Введите город доставки:');
+                if (!city) return;
+
+                const isMoscow = city.toLowerCase().includes('москв');
+                let deliveryType = null;
+                let deliveryCost = 0;
+
+                if (!isMoscow) {
+                    // Выбор способа доставки для регионов
+                    const delivery = confirm('Выберите способ доставки:\n\nОК - СДЭК (500₽)\nОтмена - Почта России (600₽)');
+                    deliveryType = delivery ? 'СДЭК' : 'Почта России';
+                    deliveryCost = delivery ? 500 : 600;
+                } else {
+                    // Для Москвы и МО - перевод на менеджера
+                    deliveryType = 'Самовывоз/Курьер';
+                    deliveryCost = 0; // Уточняется с менеджером
+                }
+
+                const address = prompt('Введите адрес доставки (улица, дом, квартира):');
+                if (!address) return;
+
+                const phone = prompt('Введите телефон для связи:');
+                if (!phone) return;
+
+                // Обновляем итоговую сумму с доставкой
+                const totalWithDelivery = total + deliveryCost;
+
                 // Формируем данные заказа
                 const orderData = {
                     items: Object.entries(cart).map(([id, quantity]) => {
@@ -979,15 +1007,28 @@
                             price: product.price
                         };
                     }),
-                    total: total,
-                    user: tg.initDataUnsafe?.user || {}
+                    subtotal: total,
+                    delivery: {
+                        type: deliveryType,
+                        cost: deliveryCost,
+                        city: city,
+                        address: address,
+                        phone: phone
+                    },
+                    total: totalWithDelivery,
+                    isMoscow: isMoscow,
+                    managerId: isMoscow ? '706541536' : null,
+                    user: tg.initDataUnsafe?.user || {},
+                    orderNumber: Math.floor(10000 + Math.random() * 90000) // Генерируем номер заказа
                 };
 
                 console.log('Order data:', orderData);
 
-                // Показываем главную кнопку с правильным цветом
-                tg.MainButton.text = `Оплатить ${total} ₽`;
-                tg.MainButton.color = '#2ecc71'; // Зелёный цвет
+                // Показываем главную кнопку с правильным цветом и суммой с доставкой
+                tg.MainButton.text = isMoscow
+                    ? `Связаться с менеджером (${total} ₽ + доставка)`
+                    : `Оплатить ${totalWithDelivery} ₽`;
+                tg.MainButton.color = isMoscow ? '#3498db' : '#2ecc71'; // Синий для Москвы, зелёный для регионов
                 tg.MainButton.textColor = '#ffffff';
                 tg.MainButton.isActive = true;
                 tg.MainButton.isVisible = true;
@@ -1012,7 +1053,11 @@
 
                 // Уведомление пользователю
                 if (tg.showAlert) {
-                    tg.showAlert(`Подтвердите заказ на ${total} ₽\n\nНажмите зелёную кнопку внизу`);
+                    if (isMoscow) {
+                        tg.showAlert(`Заказ №${orderData.orderNumber}\n\nДля клиентов из Москвы и МО:\nНажмите кнопку для связи с менеджером\nID менеджера: 706541536`);
+                    } else {
+                        tg.showAlert(`Заказ №${orderData.orderNumber}\n\nИтого с доставкой: ${totalWithDelivery} ₽\n${deliveryType}: ${deliveryCost} ₽\n\nНажмите кнопку для подтверждения`);
+                    }
                 }
 
                 console.log('=== CHECKOUT END ===');
