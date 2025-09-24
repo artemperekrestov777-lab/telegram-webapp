@@ -845,7 +845,20 @@
             emptyCart();
         }
 
-        // Обновление итоговой суммы
+        // Расчёт итоговой суммы (возвращает число)
+        function calculateTotal() {
+            let subtotal = 0;
+            for (const [productId, quantity] of Object.entries(cart)) {
+                const product = products.find(p => p.id === parseInt(productId));
+                if (product) {
+                    subtotal += product.price * quantity;
+                }
+            }
+            const discount = Math.floor(subtotal * promoDiscount);
+            return subtotal - discount;
+        }
+
+        // Обновление итоговой суммы (обновляет UI)
         function updateTotal() {
             let subtotal = 0;
             for (const [productId, quantity] of Object.entries(cart)) {
