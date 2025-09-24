@@ -649,6 +649,9 @@
 
         // Инициализация
         function init() {
+            console.log('Initializing app...');
+            console.log('Categories:', Object.keys(categories).length);
+            console.log('Products:', products.length);
             renderCategories();
             renderProducts();
             updateCartCount();
@@ -914,8 +917,21 @@
             `).join('');
         }
 
-        // Запуск
-        init();
+        // Инициализация Telegram Web App
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            tg.MainButton.text = "Оформить заказ (0 ₽)";
+            tg.MainButton.color = "#333333";
+        }
+
+        // Запуск после загрузки DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
