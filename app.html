@@ -532,7 +532,7 @@
             </div>
         </div>
 
-        <button class="checkout-btn" onclick="checkout()">Перейти к оформлению</button>
+        <button class="checkout-btn" id="checkoutBtn">Перейти к оформлению</button>
     </div>
 
     <!-- Поиск -->
@@ -666,6 +666,15 @@
             renderCategories();
             renderProducts();
             updateCartCount();
+
+            // Привязываем обработчик к кнопке оформления
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function() {
+                    console.log('Checkout button clicked!');
+                    checkout();
+                });
+            }
         }
 
         // Рендер категорий
@@ -910,67 +919,83 @@
             `).join('');
         }
 
-        // Функция оформления заказа - делаем глобальной
-        window.checkout = function() {
-            console.log('Checkout called');
+        // Функция оформления заказа
+        function checkout() {
+            try {
+                console.log('=== CHECKOUT START ===');
+                console.log('Cart:', cart);
+                console.log('Cart keys:', Object.keys(cart));
 
-            if (Object.keys(cart).length === 0) {
-                const tg = window.Telegram?.WebApp;
-                if (tg && tg.showAlert) {
-                    tg.showAlert('Корзина пуста!');
-                } else {
-                    alert('Корзина пуста!');
+                if (Object.keys(cart).length === 0) {
+                    alert('Корзина пуста! Добавьте товары.');
+                    return;
                 }
-                return;
-            }
 
-            const total = calculateTotal();
-            const tg = window.Telegram?.WebApp;
-            console.log('Telegram WebApp available:', !!tg);
+                const total = calculateTotal();
+                console.log('Total:', total);
 
-            const orderData = {
-                items: Object.entries(cart).map(([id, quantity]) => {
-                    const product = products.find(p => p.id == id);
-                    return {
-                        id: product.id,
-                        name: product.name,
-                        quantity: quantity,
-                        price: product.price
-                    };
-                }),
-                total: total,
-                user: tg?.initDataUnsafe?.user
-            };
+                const tg = window.Telegram?.WebApp;
+                console.log('Telegram WebApp:', tg);
 
-            if (tg) {
-                console.log('Sending order via Telegram');
+                if (!tg) {
+                    // Fallback для браузера
+                    const orderText = Object.entries(cart).map(([id, quantity]) => {
+                        const product = products.find(p => p.id == id);
+                        return `${product.name} x${quantity} = ${product.price * quantity} ₽`;
+                    }).join('\n');
 
-                // Очищаем предыдущие обработчики
-                tg.MainButton.offClick();
+                    if (confirm(`Оформить заказ?\n\n${orderText}\n\nИТОГО: ${total} ₽`)) {
+                        alert('Заказ отправлен! Ожидайте звонка.');
+                        emptyCart();
+                        closeCart();
+                    }
+                    return;
+                }
 
-                // Настраиваем главную кнопку
+                // Работа с Telegram
+                console.log('MainButton:', tg.MainButton);
+
+                // Формируем данные заказа
+                const orderData = {
+                    items: Object.entries(cart).map(([id, quantity]) => {
+                        const product = products.find(p => p.id == id);
+                        return {
+                            id: product.id,
+                            name: product.name,
+                            quantity: quantity,
+                            price: product.price
+                        };
+                    }),
+                    total: total,
+                    user: tg.initDataUnsafe?.user || {}
+                };
+
+                console.log('Order data:', orderData);
+
+                // Показываем главную кнопку
                 tg.MainButton.text = `Оплатить ${total} ₽`;
-                tg.MainButton.color = '#4CAF50';
-                tg.MainButton.textColor = '#ffffff';
-                tg.MainButton.isVisible = true;
                 tg.MainButton.show();
 
-                // Добавляем обработчик
+                // Убираем старые обработчики и добавляем новый
+                if (tg.MainButton.offClick) {
+                    tg.MainButton.offClick();
+                }
+
                 tg.MainButton.onClick(function() {
-                    console.log('MainButton clicked, sending data');
+                    console.log('Sending data to bot...');
                     tg.sendData(JSON.stringify(orderData));
-                    emptyCart();
-                    closeCart();
                 });
 
-                // Также показываем уведомление
-                tg.showAlert(`Нажмите кнопку "Оплатить ${total} ₽" внизу для оформления заказа`);
-            } else {
-                // Для тестирования вне Telegram
-                console.log('Order data:', orderData);
-                alert(`Заказ на сумму ${total} ₽ отправлен!\n\nТовары:\n${orderData.items.map(item => `${item.name} x${item.quantity}`).join('\n')}`);
-                emptyCart();
-                closeCart();
+                // Уведомление пользователю
+                if (tg.showAlert) {
+                    tg.showAlert(`Подтвердите заказ на ${total} ₽\n\nНажмите зелёную кнопку внизу`);
+                }
+
+                console.log('=== CHECKOUT END ===');
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Ошибка при оформлении заказа: ' + error.message);
             }
         }
 
