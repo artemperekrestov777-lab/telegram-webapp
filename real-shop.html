@@ -401,12 +401,21 @@
 </head>
 <body>
     <div class="header">
-        <div class="logo">🚬 MacTabak</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="logo">🚬 MacTabak</div>
+            <button onclick="toggleSearch()" style="background: none; border: none; font-size: 24px; cursor: pointer;">🔍</button>
+        </div>
+        <input type="text" id="searchInput" placeholder="Поиск товаров..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; margin-bottom: 10px; display: none;" onkeyup="searchProducts(event)">
         <div class="categories">
-            <button class="category-btn active" onclick="filterCategory('all')">Все</button>
-            <button class="category-btn" onclick="filterCategory('табак')">Табак</button>
-            <button class="category-btn" onclick="filterCategory('аксессуары')">Аксессуары</button>
-            <button class="category-btn" onclick="filterCategory('чай')">Чай</button>
+            <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
+            <button class="category-btn" onclick="filterCategory('табак')">🚬 Табак</button>
+            <button class="category-btn" onclick="filterCategory('аксессуары')">🔥 Аксессуары</button>
+            <button class="category-btn" onclick="filterCategory('чай')">🍵 Чай</button>
+            <button class="category-btn" onclick="filterCategory('новинки')">⭐ Новинки</button>
+            <button class="category-btn" onclick="filterCategory('luxury')">💎 Luxury</button>
+            <button class="category-btn" onclick="filterCategory('машинки')">⚙️ Машинки</button>
+            <button class="category-btn" onclick="filterCategory('трубки')">🪈 Трубки</button>
+            <button class="category-btn" onclick="filterCategory('гильзы')">📋 Гильзы</button>
         </div>
     </div>
 
@@ -483,39 +492,43 @@
             { id: 24, name: "ЗВАР набор", price: 880, category: "табак", desc: "Сборный" },
             { id: 25, name: "ХАЛФЗВАР набор", price: 880, category: "табак", desc: "Сборный" },
 
-            // ТАБАК - LUXURY
-            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "табак", desc: "Премиум линия" },
-            { id: 27, name: "Mac LUXURY", price: 1500, category: "табак", desc: "Премиум" },
+            // LUXURY
+            { id: 26, name: "Mac LUXURY №3", price: 1500, category: "luxury", desc: "Премиум линия" },
+            { id: 27, name: "Mac LUXURY", price: 1500, category: "luxury", desc: "Премиум" },
+            { id: 28, name: "Портсигар X2", price: 1800, category: "luxury", desc: "Стильный" },
+            { id: 29, name: "Портсигар X3", price: 1800, category: "luxury", desc: "Стильный" },
 
-            // АКСЕССУАРЫ - ЗАЖИГАЛКИ
-            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "аксессуары", desc: "Для трубки", badge: "NEW" },
-            { id: 2, name: "Зажигалка HONEST", price: 900, category: "аксессуары", desc: "Копия 4281" },
+            // НОВИНКИ
+            { id: 1, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "новинки", desc: "Для трубки", badge: "NEW" },
+            { id: 2, name: "Зажигалка HONEST", price: 900, category: "новинки", desc: "Копия 4281" },
+            { id: 3, name: "Премиум гильзы OCB 500", price: 600, category: "новинки", desc: "Black" },
+            { id: 5, name: "Сумка кожаная MUXIANG", price: 4800, category: "новинки", desc: "№013 (1099)" },
+            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "новинки", desc: "Профессиональный" },
 
-            // АКСЕССУАРЫ - ГИЛЬЗЫ
-            { id: 3, name: "Премиум гильзы OCB 500", price: 600, category: "аксессуары", desc: "Black" },
-            { id: 19, name: "MASCOTTE X-Long", price: 350, category: "аксессуары", desc: "200 шт" },
-            { id: 20, name: "MASCOTTE Carbon", price: 400, category: "аксессуары", desc: "200 шт" },
-            { id: 21, name: "MASCOTTE Classic", price: 300, category: "аксессуары", desc: "200 шт" },
-            { id: 22, name: "American Aviator Slim", price: 200, category: "аксессуары", desc: "XL 724мм" },
+            // ГИЛЬЗЫ
+            { id: 19, name: "MASCOTTE X-Long", price: 350, category: "гильзы", desc: "200 шт" },
+            { id: 20, name: "MASCOTTE Carbon", price: 400, category: "гильзы", desc: "200 шт" },
+            { id: 21, name: "MASCOTTE Classic", price: 300, category: "гильзы", desc: "200 шт" },
+            { id: 22, name: "American Aviator Slim", price: 200, category: "гильзы", desc: "XL 724мм" },
 
-            // АКСЕССУАРЫ - МАШИНКИ
-            { id: 4, name: "Машинка набивочная LED 1", price: 3000, category: "аксессуары", desc: "Автоматическая" },
-            { id: 34, name: "OCB EASY SLIDE", price: 4000, category: "аксессуары", desc: "Профессиональная" },
-            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "аксессуары", desc: "Автомат" },
-            { id: 36, name: "Набивочная LED", price: 3000, category: "аксессуары", desc: "С подсветкой" },
-            { id: 37, name: "INJECTORMATIC 2", price: 2500, category: "аксессуары", desc: "Серебро" },
+            // МАШИНКИ
+            { id: 4, name: "Машинка набивочная LED 1", price: 3000, category: "машинки", desc: "Автоматическая" },
+            { id: 34, name: "OCB EASY SLIDE", price: 4000, category: "машинки", desc: "Профессиональная" },
+            { id: 35, name: "INJECTORMATIC 2", price: 2500, category: "машинки", desc: "Автомат" },
+            { id: 36, name: "Набивочная LED", price: 3000, category: "машинки", desc: "С подсветкой" },
+            { id: 37, name: "INJECTORMATIC 2 Silver", price: 2500, category: "машинки", desc: "Серебро" },
 
-            // АКСЕССУАРЫ - ТРУБКИ
-            { id: 30, name: "Трубка MR Burning 220", price: 3500, category: "аксессуары", desc: "Классика" },
-            { id: 31, name: "MUXANG BRIAR №888", price: 8000, category: "аксессуары", desc: "Премиум", badge: "VIP" },
-            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "аксессуары", desc: "9мм груша" },
-            { id: 33, name: "MUXIANG BULLDOG", price: 5500, category: "аксессуары", desc: "Английская" },
+            // ТРУБКИ
+            { id: 30, name: "Трубка MR Burning 220", price: 3500, category: "трубки", desc: "Классика" },
+            { id: 31, name: "MUXANG BRIAR №888", price: 8000, category: "трубки", desc: "Премиум", badge: "VIP" },
+            { id: 32, name: "MR.BROG №63 Zurek", price: 2000, category: "трубки", desc: "9мм груша" },
+            { id: 33, name: "MUXIANG BULLDOG", price: 5500, category: "трубки", desc: "Английская" },
 
-            // АКСЕССУАРЫ - ДРУГОЕ
-            { id: 5, name: "Сумка кожаная MUXIANG", price: 4800, category: "аксессуары", desc: "№013 (1099)" },
-            { id: 28, name: "Портсигар X2", price: 1800, category: "аксессуары", desc: "Стильный" },
-            { id: 29, name: "Портсигар X3", price: 1800, category: "аксессуары", desc: "Стильный" },
-            { id: 42, name: "ТАМПЕР №1", price: 1500, category: "аксессуары", desc: "Профессиональный" },
+            // АКСЕССУАРЫ (для общей категории)
+            { id: 43, name: "Зажигалка SPUNK-BAOFA", price: 800, category: "аксессуары", desc: "Для трубки", badge: "NEW" },
+            { id: 44, name: "Зажигалка HONEST", price: 900, category: "аксессуары", desc: "Копия 4281" },
+            { id: 45, name: "Сумка кожаная MUXIANG", price: 4800, category: "аксессуары", desc: "№013 (1099)" },
+            { id: 46, name: "ТАМПЕР №1", price: 1500, category: "аксессуары", desc: "Профессиональный" },
 
             // ЧАЙ
             { id: 38, name: "Шу пуэр 2017", price: 1000, category: "чай", desc: "Линьцанское сырье" },
@@ -745,6 +758,50 @@
             if (event.target == document.getElementById('cartModal')) {
                 closeCart();
             }
+        }
+
+        // Функция поиска
+        function toggleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.style.display === 'none') {
+                searchInput.style.display = 'block';
+                searchInput.focus();
+            } else {
+                searchInput.style.display = 'none';
+                searchInput.value = '';
+                displayProducts(currentCategory);
+            }
+        }
+
+        function searchProducts(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            if (searchTerm === '') {
+                displayProducts(currentCategory);
+                return;
+            }
+
+            const filteredProducts = products.filter(p =>
+                p.name.toLowerCase().includes(searchTerm) ||
+                p.desc.toLowerCase().includes(searchTerm)
+            );
+
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                        ${product.name}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.desc}</div>
+                        <div class="product-bottom">
+                            <div class="product-price">${product.price} ₽</div>
+                            <button class="add-btn" onclick="addToCart(${product.id})">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Инициализация
