@@ -445,6 +445,14 @@
             gap: 5px;
             cursor: pointer;
             padding: 5px 10px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+            opacity: 0.8;
         }
 
         .nav-item.active {
@@ -950,23 +958,47 @@
             }
         }
 
-        // Функции навигации
-        function showPage(page) {
+        // Функции навигации - делаем глобальными
+        window.showPage = function(page) {
             console.log('Navigating to:', page);
-            // Здесь будет логика переключения страниц
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            if (page === 'home') {
+                event.currentTarget.classList.add('active');
+            }
         }
 
-        function showOrders() {
-            alert('История заказов появится после первого заказа');
+        window.showOrders = function() {
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                tg.showAlert('История заказов появится после первого заказа');
+            } else {
+                alert('История заказов появится после первого заказа');
+            }
         }
 
-        function showProfile() {
+        window.showProfile = function() {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-            alert(`Профиль: ${user?.first_name || 'Пользователь'}`);
+            const tg = window.Telegram?.WebApp;
+            const profileInfo = `Профиль: ${user?.first_name || 'Пользователь'}${user?.username ? '\n@' + user.username : ''}`;
+
+            if (tg) {
+                tg.showAlert(profileInfo);
+            } else {
+                alert(profileInfo);
+            }
         }
 
-        function showAbout() {
-            alert('MacTabak Shop - Лучший магазин табачной продукции\n\nТелефон: +7 (XXX) XXX-XX-XX\nTelegram: @mactabak_support');
+        window.showAbout = function() {
+            const tg = window.Telegram?.WebApp;
+            const aboutInfo = 'MacTabak Shop - Лучший магазин табачной продукции\n\nТелефон: +7 (XXX) XXX-XX-XX\nTelegram: @mactabak_support';
+
+            if (tg) {
+                tg.showAlert(aboutInfo);
+            } else {
+                alert(aboutInfo);
+            }
         }
 
         // Инициализация Telegram Web App
