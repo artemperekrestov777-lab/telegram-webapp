@@ -978,9 +978,20 @@
 
                 if (!isMoscow) {
                     // Выбор способа доставки для регионов
-                    const delivery = confirm('Выберите способ доставки:\n\nОК - СДЭК (500₽)\nОтмена - Почта России (600₽)');
-                    deliveryType = delivery ? 'СДЭК' : 'Почта России';
-                    deliveryCost = delivery ? 500 : 600;
+                    const deliveryChoice = prompt('Выберите способ доставки:\n\n1 - СДЭК (500₽)\n2 - Почта России (600₽)\n\nВведите 1 или 2:');
+
+                    if (!deliveryChoice) return;
+
+                    if (deliveryChoice === '1') {
+                        deliveryType = 'СДЭК';
+                        deliveryCost = 500;
+                    } else if (deliveryChoice === '2') {
+                        deliveryType = 'Почта России';
+                        deliveryCost = 600;
+                    } else {
+                        alert('Неверный выбор. Попробуйте снова.');
+                        return;
+                    }
                 } else {
                     // Для Москвы и МО - перевод на менеджера
                     deliveryType = 'Самовывоз/Курьер';
