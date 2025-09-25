@@ -6,6 +6,60 @@
     <title>MacTabak - Магазин табачной продукции</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Custom notification */
+        .custom-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            text-align: center;
+            min-width: 250px;
+            max-width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .custom-notification p {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .custom-notification button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -1155,7 +1209,7 @@
                     addToCart(currentProduct.id, false);
                 }
                 closeProductModal();
-                alert(`Добавлено ${modalQuantity} шт. в корзину`);
+                showNotification(`Добавлено ${modalQuantity} шт. в корзину`);
             }
         }
 
@@ -1175,7 +1229,7 @@
             checkCartReminder();
 
             if (showAlert) {
-                alert(`${product.name} добавлен в корзину`);
+                showNotification(`${product.name} добавлен в корзину`);
             }
         }
 
@@ -1410,7 +1464,7 @@
             updateCartBadge();
             checkCartReminder();
             document.getElementById('paymentModal').classList.remove('active');
-            alert('Спасибо за ваш заказ! Ждем вас снова!');
+            showNotification('Спасибо за ваш заказ! Ждем вас снова!');
             orderNumber = Date.now();
         }
 
@@ -1462,6 +1516,31 @@
         // Go back
         function goBack() {
             // Implement navigation history
+        }
+
+        // Custom notification function
+        function showNotification(message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+
+            const notification = document.createElement('div');
+            notification.className = 'custom-notification';
+            notification.innerHTML = `
+                <p>${message}</p>
+                <button onclick="closeNotification()">OK</button>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(notification);
+
+            window.closeNotification = function() {
+                overlay.remove();
+                notification.remove();
+            };
+
+            overlay.onclick = function() {
+                closeNotification();
+            };
         }
 
         // Initialize
