@@ -133,6 +133,12 @@
             -webkit-overflow-scrolling: touch;
             margin-top: 60px;
             border-bottom: 1px solid #e0e0e0;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .categories-container.dragging {
+            cursor: grabbing;
         }
 
         .categories-container::-webkit-scrollbar {
@@ -1158,6 +1164,63 @@
             document.getElementById('welcomeScreen').style.display = 'none';
             displayProducts();
             checkCartReminder();
+            initDragScroll();
+        }
+
+        // Initialize drag scrolling for categories
+        function initDragScroll() {
+            const container = document.querySelector('.categories-container');
+            if (!container) return;
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+                container.classList.add('dragging');
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+                e.preventDefault();
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+                container.classList.remove('dragging');
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+                container.classList.remove('dragging');
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2; // Scroll speed
+                container.scrollLeft = scrollLeft - walk;
+            });
+
+            // Prevent click on buttons after dragging
+            let isDragging = false;
+            container.addEventListener('mousedown', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('mousemove', () => {
+                if (isDown) isDragging = true;
+            });
+
+            const buttons = container.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (isDragging) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            });
         }
 
         // Display products
