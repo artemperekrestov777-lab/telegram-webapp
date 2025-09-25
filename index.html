@@ -1197,8 +1197,48 @@
 
             grid.innerHTML = filtered.map(product => `
                 <div class="product-card" onclick="openProductModal(${product.id})">
-                    <div class="product-image" style="padding: 15px; background: white;">
-                        <img src="mactabak-logo.svg" alt="Mac Tabak" style="width: 100%; height: 100%; object-fit: contain;">
+                    <div class="product-image" style="padding: 10px; background: white;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="width: 100%; height: 100%;">
+                          <!-- Внешний круг -->
+                          <circle cx="150" cy="150" r="145" fill="white" stroke="#333" stroke-width="10"/>
+                          <!-- Внутренний круг -->
+                          <circle cx="150" cy="150" r="125" fill="none" stroke="#333" stroke-width="5"/>
+                          <!-- Череп с бородой -->
+                          <g transform="translate(150, 120)">
+                            <!-- Череп -->
+                            <ellipse cx="0" cy="0" rx="45" ry="50" fill="none" stroke="#333" stroke-width="3"/>
+                            <!-- Глаза -->
+                            <circle cx="-15" cy="-5" r="12" fill="#333"/>
+                            <circle cx="15" cy="-5" r="12" fill="#333"/>
+                            <!-- Нос -->
+                            <path d="M0,5 L-5,15 L0,12 L5,15 L0,5" fill="#333"/>
+                            <!-- Борода -->
+                            <path d="M-25,25 Q-20,40 -10,45 Q0,50 0,50 Q0,50 10,45 Q20,40 25,25" fill="none" stroke="#333" stroke-width="3"/>
+                            <path d="M-20,30 Q-15,38 -8,40 M20,30 Q15,38 8,40 M0,35 L0,45" stroke="#333" stroke-width="2" fill="none"/>
+                            <!-- Трубки по бокам -->
+                            <rect x="-60" y="-5" width="25" height="8" rx="2" fill="#333"/>
+                            <rect x="35" y="-5" width="25" height="8" rx="2" fill="#333"/>
+                            <circle cx="-65" cy="-1" r="6" fill="none" stroke="#333" stroke-width="2"/>
+                            <circle cx="65" cy="-1" r="6" fill="none" stroke="#333" stroke-width="2"/>
+                          </g>
+                          <!-- Надписи -->
+                          <text x="150" y="50" font-family="Georgia, serif" font-size="28" font-style="italic" text-anchor="middle" fill="#333">Mac Tabak</text>
+                          <!-- Номер -->
+                          <text x="60" y="150" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">№</text>
+                          <text x="240" y="150" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">13</text>
+                          <!-- Звезды -->
+                          <g transform="translate(150, 200)">
+                            <path d="M-50,0 L-48,-6 L-42,-6 L-47,-10 L-45,-16 L-50,-11 L-55,-16 L-53,-10 L-58,-6 L-52,-6 Z" fill="#333"/>
+                            <path d="M-25,0 L-23,-6 L-17,-6 L-22,-10 L-20,-16 L-25,-11 L-30,-16 L-28,-10 L-33,-6 L-27,-6 Z" fill="#333"/>
+                            <path d="M0,0 L2,-6 L8,-6 L3,-10 L5,-16 L0,-11 L-5,-16 L-3,-10 L-8,-6 L-2,-6 Z" fill="#333"/>
+                            <path d="M25,0 L27,-6 L33,-6 L28,-10 L30,-16 L25,-11 L20,-16 L22,-10 L17,-6 L23,-6 Z" fill="#333"/>
+                            <path d="M50,0 L52,-6 L58,-6 L53,-10 L55,-16 L50,-11 L45,-16 L47,-10 L42,-6 L48,-6 Z" fill="#333"/>
+                          </g>
+                          <!-- Premium tobacco -->
+                          <text x="150" y="230" font-family="Georgia, serif" font-size="14" font-style="italic" text-anchor="middle" fill="#333">premium tobacco</text>
+                          <!-- Год -->
+                          <text x="150" y="255" font-family="Arial" font-size="16" text-anchor="middle" fill="#333">2018</text>
+                        </svg>
                     </div>
                     <div class="product-info">
                         <div class="product-details">
