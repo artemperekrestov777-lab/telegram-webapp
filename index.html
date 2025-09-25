@@ -1034,14 +1034,10 @@
     <div class="product-modal" id="productModal" onclick="closeProductModal(event)">
         <div class="product-modal-content" onclick="event.stopPropagation()">
             <div class="product-modal-image" id="productModalImage">
-                <div style="width: 100px; height: 100px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
-                    <div style="color: white; text-align: center;">
-                        <div style="font-size: 40px;">💀</div>
-                        <div style="font-size: 10px; margin-top: -5px;">MacTabak</div>
-                    </div>
-                    <div style="position: absolute; top: 35%; left: 20%; transform: rotate(-45deg); width: 60px; height: 3px; background: #666;"></div>
-                    <div style="position: absolute; top: 35%; right: 20%; transform: rotate(45deg); width: 60px; height: 3px; background: #666;"></div>
-                </div>
+                <img src="https://i.ibb.co/7Kq5ZB5/mactabak-logo.png"
+                     alt="MacTabak"
+                     style="width: 100px; height: 100px; object-fit: contain; filter: grayscale(100%);"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9IiMzMzMiLz4KICA8dGV4dCB4PSI1MCIgeT0iNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjMwIj7wn5KAKPC9dGV4dD4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjgiPk1hY1RhYmFrPC90ZXh0Pgo8L3N2Zz4='">
             </div>
             <div class="product-modal-info">
                 <div class="product-modal-name" id="productModalName"></div>
@@ -1181,15 +1177,11 @@
 
             grid.innerHTML = filtered.map(product => `
                 <div class="product-card" onclick="openProductModal(${product.id})">
-                    <div class="product-image">
-                        <div style="width: 100px; height: 100px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
-                            <div style="color: white; text-align: center;">
-                                <div style="font-size: 40px;">💀</div>
-                                <div style="font-size: 10px; margin-top: -5px;">MacTabak</div>
-                            </div>
-                            <div style="position: absolute; top: 35%; left: 20%; transform: rotate(-45deg); width: 60px; height: 3px; background: #666;"></div>
-                            <div style="position: absolute; top: 35%; right: 20%; transform: rotate(45deg); width: 60px; height: 3px; background: #666;"></div>
-                        </div>
+                    <div class="product-image" style="padding: 20px;">
+                        <img src="https://i.ibb.co/7Kq5ZB5/mactabak-logo.png"
+                             alt="MacTabak"
+                             style="width: 100px; height: 100px; object-fit: contain; filter: grayscale(100%);"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9IiMzMzMiLz4KICA8dGV4dCB4PSI1MCIgeT0iNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjMwIj7wn5KAKPC9dGV4dD4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjgiPk1hY1RhYmFrPC90ZXh0Pgo8L3N2Zz4='">
                     </div>
                     <div class="product-info">
                         <div class="product-details">
