@@ -1197,82 +1197,8 @@
 
             grid.innerHTML = filtered.map(product => `
                 <div class="product-card" onclick="openProductModal(${product.id})">
-                    <div class="product-image" style="padding: 8px; background: #f9f9f9; border-radius: 12px;">
-                        <div style="background: white; border-radius: 50%; padding: 5px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="width: 95%; height: 95%;">
-                            <!-- Внешний круг с серой рамкой -->
-                            <circle cx="200" cy="200" r="195" fill="#e8e8e8" stroke="#4a4a4a" stroke-width="4"/>
-                            <circle cx="200" cy="200" r="185" fill="white"/>
-
-                            <!-- Заголовок Mac Tabak -->
-                            <text x="200" y="60" font-family="Georgia, serif" font-size="36" font-style="italic" text-anchor="middle" fill="#2c2c2c">Mac Tabak</text>
-
-                            <!-- Левая декоративная линия -->
-                            <path d="M30,80 Q50,75 70,80" stroke="#4a4a4a" stroke-width="2" fill="none"/>
-                            <!-- Правая декоративная линия -->
-                            <path d="M330,80 Q350,75 370,80" stroke="#4a4a4a" stroke-width="2" fill="none"/>
-
-                            <!-- Центральная композиция -->
-                            <g transform="translate(200, 180)">
-                              <!-- Капитанская фуражка -->
-                              <ellipse cx="0" cy="-50" rx="45" ry="20" fill="#2c2c2c"/>
-                              <rect x="-45" y="-55" width="90" height="12" fill="#2c2c2c"/>
-                              <circle cx="0" cy="-55" r="5" fill="white"/>
-                              <path d="M-30,-50 L30,-50" stroke="white" stroke-width="1"/>
-
-                              <!-- Череп -->
-                              <ellipse cx="0" cy="0" rx="50" ry="55" fill="#2c2c2c"/>
-                              <ellipse cx="0" cy="-5" rx="42" ry="47" fill="white"/>
-
-                              <!-- Глазницы -->
-                              <ellipse cx="-18" cy="-10" rx="14" ry="18" fill="#2c2c2c"/>
-                              <ellipse cx="18" cy="-10" rx="14" ry="18" fill="#2c2c2c"/>
-
-                              <!-- Нос треугольный -->
-                              <path d="M0,0 L-6,15 L0,12 L6,15 Z" fill="#2c2c2c"/>
-
-                              <!-- Скрещенные трубки позади -->
-                              <g transform="rotate(-25)">
-                                <rect x="-90" y="-3" width="180" height="6" fill="#4a4a4a"/>
-                                <ellipse cx="-90" cy="0" rx="12" ry="10" fill="#2c2c2c"/>
-                                <ellipse cx="90" cy="0" rx="12" ry="10" fill="#2c2c2c"/>
-                              </g>
-                              <g transform="rotate(25)">
-                                <rect x="-90" y="-3" width="180" height="6" fill="#4a4a4a"/>
-                                <ellipse cx="-90" cy="0" rx="12" ry="10" fill="#2c2c2c"/>
-                                <ellipse cx="90" cy="0" rx="12" ry="10" fill="#2c2c2c"/>
-                              </g>
-
-                              <!-- Борода детализированная -->
-                              <path d="M-35,35 Q-30,55 -20,65 Q-10,70 0,72 Q10,70 20,65 Q30,55 35,35"
-                                    fill="#2c2c2c" stroke="#2c2c2c" stroke-width="2"/>
-                              <!-- Линии в бороде -->
-                              <path d="M-25,40 L-23,60 M-15,42 L-13,63 M-5,43 L-3,65 M5,43 L7,65 M15,42 L17,63 M25,40 L23,60"
-                                    stroke="white" stroke-width="1.5"/>
-                            </g>
-
-                            <!-- № слева -->
-                            <text x="60" y="200" font-family="Arial Black" font-size="22" font-weight="900" fill="#2c2c2c">№</text>
-
-                            <!-- 13 справа -->
-                            <text x="340" y="200" font-family="Arial Black" font-size="22" font-weight="900" fill="#2c2c2c">13</text>
-
-                            <!-- Звезды -->
-                            <g transform="translate(200, 280)">
-                              <text x="-60" y="0" font-size="20" fill="#2c2c2c">★</text>
-                              <text x="-30" y="0" font-size="20" fill="#2c2c2c">★</text>
-                              <text x="0" y="0" font-size="20" fill="#2c2c2c">★</text>
-                              <text x="30" y="0" font-size="20" fill="#2c2c2c">★</text>
-                              <text x="60" y="0" font-size="20" fill="#2c2c2c">★</text>
-                            </g>
-
-                            <!-- premium tobacco -->
-                            <text x="200" y="320" font-family="Georgia, serif" font-size="18" font-style="italic" text-anchor="middle" fill="#4a4a4a">premium tobacco</text>
-
-                            <!-- 2018 -->
-                            <text x="200" y="355" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#2c2c2c">2018</text>
-                          </svg>
-                        </div>
+                    <div class="product-image" style="padding: 10px; background: white;">
+                        <img src="mactabak-logo.png" alt="Mac Tabak" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="product-info">
                         <div class="product-details">
