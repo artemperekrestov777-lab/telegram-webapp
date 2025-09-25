@@ -197,6 +197,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
+            grid-auto-rows: 1fr;
         }
 
         .product-card {
@@ -230,6 +231,13 @@
             display: flex;
             flex-direction: column;
             flex: 1;
+            justify-content: space-between;
+        }
+
+        .product-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-name {
@@ -238,7 +246,8 @@
             color: #333;
             margin-bottom: 5px;
             line-height: 1.3;
-            min-height: 32px;
+            min-height: 34px;
+            flex: 1;
         }
 
         .product-price {
@@ -246,7 +255,6 @@
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
-            margin-top: auto;
         }
 
         .add-to-cart-btn {
@@ -1157,8 +1165,10 @@
                 <div class="product-card" onclick="openProductModal(${product.id})">
                     <div class="product-image">${product.emoji}</div>
                     <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">${product.price} ₽</div>
+                        <div class="product-details">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">${product.price} ₽</div>
+                        </div>
                         <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(${product.id})">
                             В корзину
                         </button>
