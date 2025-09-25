@@ -206,6 +206,9 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             transition: transform 0.3s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .product-card:active {
@@ -224,6 +227,9 @@
 
         .product-info {
             padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .product-name {
@@ -232,6 +238,7 @@
             color: #333;
             margin-bottom: 5px;
             line-height: 1.3;
+            min-height: 32px;
         }
 
         .product-price {
@@ -239,6 +246,7 @@
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
+            margin-top: auto;
         }
 
         .add-to-cart-btn {
