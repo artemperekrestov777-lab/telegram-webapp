@@ -39,8 +39,10 @@
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 5px;
+            padding: 15px 0;
             scrollbar-width: none;
+            min-height: 70px;
+            align-items: center;
         }
 
         .categories::-webkit-scrollbar {
@@ -48,15 +50,17 @@
         }
 
         .category-btn {
-            padding: 10px 20px;
+            padding: 15px 28px;
             background: #ecf0f1;
             border: none;
-            border-radius: 25px;
+            border-radius: 28px;
             cursor: pointer;
             white-space: nowrap;
             font-weight: 500;
             transition: all 0.3s;
-            font-size: 14px;
+            font-size: 16px;
+            min-height: 46px;
+            line-height: 1;
         }
 
         .category-btn.active {
@@ -89,16 +93,18 @@
         .product-image {
             width: 100%;
             height: 180px;
-            background: linear-gradient(135deg, #8B7355 0%, #5C4033 100%);
+            background: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
             padding: 10px;
+        }
+
+        .product-image img {
+            max-width: 140px;
+            max-height: 140px;
+            object-fit: contain;
         }
 
         .product-badge {
@@ -399,6 +405,55 @@
             from { transform: translateX(100%); }
             to { transform: translateX(0); }
         }
+
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s;
+            border: none;
+            color: white;
+        }
+
+        .floating-cart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        .floating-cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floating-cart-btn .cart-icon {
+            font-size: 28px;
+        }
+
+        .floating-cart-btn .floating-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #e74c3c;
+            color: white;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0 4px;
+        }
     </style>
 </head>
 <body>
@@ -452,6 +507,11 @@
 
     <div class="notification" id="notification"></div>
 
+    <button class="floating-cart-btn" onclick="openCart()">
+        <span class="cart-icon">🛒</span>
+        <span class="floating-badge" id="floatingBadge" style="display: none;">0</span>
+    </button>
+
     <script>
         // Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
@@ -504,7 +564,7 @@
                 <div class="product-card">
                     <div class="product-image">
                         ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
-                        ${product.img}
+                        <img src="mactabak-logo.svg" alt="Mac Tabak Logo"/>
                     </div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
@@ -549,12 +609,16 @@
         // Обновление значка корзины
         function updateCartBadge() {
             const badge = document.getElementById('cartBadge');
+            const floatingBadge = document.getElementById('floatingBadge');
             const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
             if (count > 0) {
                 badge.style.display = 'flex';
                 badge.textContent = count;
+                floatingBadge.style.display = 'flex';
+                floatingBadge.textContent = count;
             } else {
                 badge.style.display = 'none';
+                floatingBadge.style.display = 'none';
             }
         }
 
