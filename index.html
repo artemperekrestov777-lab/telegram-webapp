@@ -1323,13 +1323,13 @@
 
         // Clear cart
         function clearCart() {
-            if (confirm('Очистить корзину?')) {
+            showConfirmation('Очистить корзину?', () => {
                 cart = [];
                 saveCart();
                 updateCartBadge();
                 checkCartReminder();
                 openCart();
-            }
+            });
         }
 
         // Open checkout
@@ -1540,6 +1540,40 @@
 
             overlay.onclick = function() {
                 closeNotification();
+            };
+        }
+
+        // Custom confirmation dialog
+        function showConfirmation(message, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+
+            const notification = document.createElement('div');
+            notification.className = 'custom-notification';
+            notification.innerHTML = `
+                <p>${message}</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="cancelConfirmation()" style="background: #999;">Отмена</button>
+                    <button onclick="acceptConfirmation()">OK</button>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(notification);
+
+            window.cancelConfirmation = function() {
+                overlay.remove();
+                notification.remove();
+            };
+
+            window.acceptConfirmation = function() {
+                overlay.remove();
+                notification.remove();
+                onConfirm();
+            };
+
+            overlay.onclick = function() {
+                cancelConfirmation();
             };
         }
 
