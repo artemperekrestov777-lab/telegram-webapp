@@ -1447,9 +1447,20 @@
                 }
             } else {
                 // Regions - show QR code
+                // Реквизиты: ИП Гусев Дмитрий Анатольевич, ИНН 530204186437, РС 40802810200003565112
+                const payeeInn = '530204186437';
+                const payeeName = encodeURIComponent('ИП Гусев Дмитрий Анатольевич');
+                const bankAccount = '40802810200003565112';
+                const purpose = encodeURIComponent(`Оплата заказа ${orderNumber}`);
+                const sum = orderData.total * 100; // в копейках
+
+                // Формируем строку для QR по стандарту СБП
+                const qrData = `ST00012|Name=${payeeName}|PersonalAcc=${bankAccount}|PayeeINN=${payeeInn}|Purpose=${purpose}|Sum=${sum}`;
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+
                 paymentContent.innerHTML = `
                     <div class="qr-code" style="text-align: center; margin: 20px 0;">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://qr.nspk.ru/AS100003PBL01T5G1MR6K8R9RN14PF32?type=02%26bank=100000000111%26sum=${orderData.total * 100}%26cur=RUB%26crc=B197" style="width: 200px; height: 200px; border: 1px solid #ddd; padding: 10px; background: white;">
+                        <img src="${qrUrl}" style="width: 200px; height: 200px; border: 1px solid #ddd; padding: 10px; background: white;">
                     </div>
                     <div class="payment-instructions">
                         <strong>Добрый день! Пожалуйста, прочитайте всю информацию до конца ‼️‼️‼️</strong><br><br>
