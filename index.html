@@ -1283,7 +1283,9 @@
             } else {
                 content.innerHTML = cart.map(item => `
                     <div class="cart-item">
-                        <div class="cart-item-image">${item.emoji}</div>
+                        <div class="cart-item-image">
+                            <img src="mactabak-logo.png" alt="MacTabak" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
                         <div class="cart-item-info">
                             <div class="cart-item-name">${item.name}</div>
                             <div class="cart-item-price">${item.price} ₽</div>
