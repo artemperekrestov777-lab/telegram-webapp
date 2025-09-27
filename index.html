@@ -1623,7 +1623,9 @@
             results.innerHTML = filtered.length > 0
                 ? `<div class="products-grid">${filtered.map(product => `
                     <div class="product-card" onclick="closeSearch(); openProductModal(${product.id})">
-                        <div class="product-image">${product.emoji}</div>
+                        <div class="product-image" style="padding: 10px; background: white;">
+                            <img src="mactabak-logo.png" alt="Mac Tabak" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
                         <div class="product-info">
                             <div class="product-name">${product.name}</div>
                             <div class="product-price">${product.price} ₽</div>
