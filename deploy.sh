@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "📦 Обновление MacTabak WebApp..."
+echo ""
+echo "Для обновления WebApp на хостинге:"
+echo ""
+echo "1. Откройте https://dash.cloudflare.com"
+echo "2. Выберите ваш проект 'mactabak-webapp'"
+echo "3. Перейдите в Settings → Builds & deployments"
+echo "4. Нажмите 'Upload assets'"
+echo "5. Загрузите обновленный файл webapp.html"
+echo ""
+echo "ИЛИ используйте Cloudflare CLI:"
+echo "npx wrangler pages deploy . --project-name=mactabak-webapp"
+echo ""
+echo "Файл webapp.html готов к загрузке!"

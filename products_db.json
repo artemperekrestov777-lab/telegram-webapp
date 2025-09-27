@@ -1,0 +1,16 @@
+{
+  "new_mactabak": {
+    "name": "🆕 Новинки от МАК ТАБАК",
+    "products": [
+      {"id": 1, "name": "🚬 Зажигалка SPUNK-BAOFA", "price": 800, "stock": 10},
+      {"id": 2, "name": "🚬 Зажигалка HONEST", "price": 900, "stock": 8}
+    ]
+  },
+  "standard_blends": {
+    "name": "🚬 Стандартные бленды",
+    "products": [
+      {"id": 6, "name": "🚬 ШТОРМ Storm", "price": 1700, "stock": 20},
+      {"id": 7, "name": "🚬 ЛЕГЕНДА legend", "price": 1700, "stock": 20}
+    ]
+  }
+}
