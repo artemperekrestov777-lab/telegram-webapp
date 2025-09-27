@@ -1166,7 +1166,16 @@
         let currentProduct = null;
         let modalQuantity = 1;
         let deliveryCost = 0;
-        let orderNumber = Date.now();
+
+        // Order numbering with T prefix
+        function getNextOrderNumber() {
+            let lastOrderNum = parseInt(localStorage.getItem('mactabak_last_order') || '0');
+            lastOrderNum++;
+            localStorage.setItem('mactabak_last_order', lastOrderNum.toString());
+            return 'T' + lastOrderNum;
+        }
+
+        let orderNumber = getNextOrderNumber();
 
         // Check cart reminder
         function checkCartReminder() {
@@ -1537,7 +1546,6 @@
                     <div class="manager-message">
                         <h3>Заказ №${orderNumber}</h3>
                         <p>С вами в ближайшее время свяжется менеджер для выставления счета.</p>
-                        <p>ID менеджера: 706541536</p>
                     </div>
                     <button class="close-payment-btn" onclick="completeOrder()">Закрыть</button>
                 `;
@@ -1589,7 +1597,7 @@
             checkCartReminder();
             document.getElementById('paymentModal').classList.remove('active');
             showNotification('Спасибо за ваш заказ! Ждем вас снова!');
-            orderNumber = Date.now();
+            orderNumber = getNextOrderNumber();
         }
 
         // Close payment
