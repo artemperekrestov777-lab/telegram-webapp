@@ -1550,13 +1550,19 @@
                     <button class="close-payment-btn" onclick="completeOrder()">Закрыть</button>
                 `;
 
-                // Send to manager
-                if (tg) {
+                // Send to manager and close WebApp
+                if (tg && tg.initData) {
+                    // Send data to bot and close WebApp
                     tg.sendData(JSON.stringify({
                         action: 'moscow_order',
                         managerId: 706541536,
                         ...orderData
                     }));
+
+                    // Also close the WebApp to ensure data is sent
+                    setTimeout(() => {
+                        tg.close();
+                    }, 100);
                 }
             } else {
                 // Regions - show QR code
@@ -1578,13 +1584,19 @@
                     <button class="close-payment-btn" onclick="completeOrder()">Закрыть</button>
                 `;
 
-                // Send order data
-                if (tg) {
+                // Send order data and close WebApp
+                if (tg && tg.initData) {
+                    // Send data to bot and close WebApp
                     tg.sendData(JSON.stringify({
                         action: 'region_order',
                         email: 'chek_qr@bk.ru',
                         ...orderData
                     }));
+
+                    // Also close the WebApp to ensure data is sent
+                    setTimeout(() => {
+                        tg.close();
+                    }, 100);
                 }
             }
         }
