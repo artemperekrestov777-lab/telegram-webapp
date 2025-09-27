@@ -1,0 +1,44 @@
+[
+  {
+    "order_id": 1758886311,
+    "user_id": 2042277006,
+    "date": "2025-09-26 13:31",
+    "customer_name": "Дмитрий",
+    "customer_phone": "89253295567",
+    "customer_city": "Москва",
+    "delivery_address": "",
+    "delivery_type": "",
+    "cart": {
+      "7": 2,
+      "17": 4
+    },
+    "total": 1520,
+    "status": "В обработке"
+  },
+  {
+    "order_id": 1758886314,
+    "user_id": 2042277006,
+    "date": "2025-09-26 13:31",
+    "customer_name": "Дмитрий",
+    "customer_phone": "89253295567",
+    "customer_city": "Москва",
+    "delivery_address": "",
+    "delivery_type": "",
+    "cart": {},
+    "total": 1520,
+    "status": "В обработке"
+  },
+  {
+    "order_id": 1758886319,
+    "user_id": 2042277006,
+    "date": "2025-09-26 13:31",
+    "customer_name": "Дмитрий",
+    "customer_phone": "89253295567",
+    "customer_city": "Москва",
+    "delivery_address": "",
+    "delivery_type": "",
+    "cart": {},
+    "total": 1520,
+    "status": "В обработке"
+  }
+]

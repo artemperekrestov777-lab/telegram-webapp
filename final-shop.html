@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacTabak Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .category-btn.active {
+            background: #333;
+            color: white;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .product-price {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 8px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #333;
+        }
+
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .cart-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">MacTabak</div>
+        <div class="categories">
+            <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
+            <button class="category-btn" onclick="filterCategory('vape')">Вейпы</button>
+            <button class="category-btn" onclick="filterCategory('pod')">Поды</button>
+            <button class="category-btn" onclick="filterCategory('liquid')">Жидкости</button>
+        </div>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showCatalog()">
+            <div class="nav-icon">🏠</div>
+            <div>Главная</div>
+        </div>
+        <div class="nav-item" onclick="showOrders()">
+            <div class="nav-icon">📦</div>
+            <div>Заказы</div>
+        </div>
+        <div class="nav-item" onclick="openCart()">
+            <div class="nav-icon" style="position: relative;">
+                🛒
+                <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </div>
+            <div>Корзина</div>
+        </div>
+        <div class="nav-item" onclick="showProfile()">
+            <div class="nav-icon">👤</div>
+            <div>Профиль</div>
+        </div>
+    </div>
+
+    <!-- Корзина -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Корзина</h2>
+                <button class="close-btn" onclick="closeCart()">✕</button>
+            </div>
+            <div id="cartItems"></div>
+            <div class="cart-total">
+                Итого: <span id="totalAmount">0</span> ₽
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.MainButton.hide();
+        }
+
+        // Данные о товарах
+        const products = [
+            { id: 1, name: "HQD Cuvie", price: 450, category: "vape", emoji: "🔵" },
+            { id: 2, name: "Elf Bar 600", price: 500, category: "vape", emoji: "🟣" },
+            { id: 3, name: "JUUL Pods", price: 800, category: "pod", emoji: "⚫" },
+            { id: 4, name: "Logic Pro", price: 650, category: "pod", emoji: "🔴" },
+            { id: 5, name: "Brusko Salt", price: 350, category: "liquid", emoji: "🟢" },
+            { id: 6, name: "Husky Premium", price: 400, category: "liquid", emoji: "🟡" },
+            { id: 7, name: "Gippro Neo", price: 550, category: "vape", emoji: "🟠" },
+            { id: 8, name: "Moti Piin", price: 480, category: "pod", emoji: "🔵" }
+        ];
+
+        let cart = {};
+        let currentCategory = 'all';
+
+        // Отображение товаров
+        function displayProducts(category = 'all') {
+            const grid = document.getElementById('productsGrid');
+            const filteredProducts = category === 'all'
+                ? products
+                : products.filter(p => p.category === category);
+
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">${product.emoji}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">
+                            В корзину
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Фильтрация по категории
+        function filterCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            displayProducts(category);
+        }
+
+        // Добавление в корзину
+        function addToCart(productId) {
+            if (!cart[productId]) {
+                cart[productId] = 0;
+            }
+            cart[productId]++;
+            updateCartBadge();
+
+            // Показываем уведомление
+            const product = products.find(p => p.id === productId);
+            if (tg) {
+                tg.showPopup({
+                    title: 'Добавлено в корзину',
+                    message: product.name,
+                    buttons: [{type: 'ok'}]
+                });
+            } else {
+                alert(`${product.name} добавлен в корзину`);
+            }
+        }
+
+        // Обновление счетчика корзины
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            if (count > 0) {
+                badge.style.display = 'flex';
+                badge.textContent = count;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Открытие корзины
+        function openCart() {
+            document.getElementById('cartModal').style.display = 'block';
+            displayCartItems();
+        }
+
+        // Закрытие корзины
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        // Отображение товаров в корзине
+        function displayCartItems() {
+            const cartItemsDiv = document.getElementById('cartItems');
+
+            if (Object.keys(cart).length === 0) {
+                cartItemsDiv.innerHTML = '<p style="text-align: center; color: #999;">Корзина пуста</p>';
+                document.getElementById('totalAmount').textContent = '0';
+                return;
+            }
+
+            let total = 0;
+            let html = '';
+
+            Object.entries(cart).forEach(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                if (product && quantity > 0) {
+                    const subtotal = product.price * quantity;
+                    total += subtotal;
+                    html += `
+                        <div class="cart-item">
+                            <div>
+                                <div>${product.emoji} ${product.name}</div>
+                                <div style="color: #666; font-size: 14px;">${product.price} ₽</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${productId}, -1)">-</button>
+                                <span>${quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity(${productId}, 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            cartItemsDiv.innerHTML = html;
+            document.getElementById('totalAmount').textContent = total;
+        }
+
+        // Изменение количества
+        function updateQuantity(productId, change) {
+            cart[productId] += change;
+            if (cart[productId] <= 0) {
+                delete cart[productId];
+            }
+            updateCartBadge();
+            displayCartItems();
+        }
+
+        // Оформление заказа
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+
+            const total = Object.entries(cart).reduce((sum, [productId, qty]) => {
+                const product = products.find(p => p.id == productId);
+                return sum + (product.price * qty);
+            }, 0);
+
+            // Формируем сообщение о заказе
+            let orderText = '🛒 Новый заказ:\n\n';
+            Object.entries(cart).forEach(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                orderText += `${product.emoji} ${product.name} x${quantity} = ${product.price * quantity} ₽\n`;
+            });
+            orderText += `\n💰 Итого: ${total} ₽`;
+
+            if (tg) {
+                // Отправляем данные боту
+                tg.sendData(JSON.stringify({
+                    action: 'order',
+                    cart: cart,
+                    total: total
+                }));
+                tg.close();
+            } else {
+                alert('Заказ отправлен!\n\n' + orderText);
+                cart = {};
+                updateCartBadge();
+                closeCart();
+            }
+        }
+
+        // Навигация
+        function showCatalog() {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function showOrders() {
+            alert('История заказов');
+        }
+
+        function showProfile() {
+            alert('Профиль пользователя');
+        }
+
+        // Инициализация
+        displayProducts();
+    </script>
+</body>
+</html>

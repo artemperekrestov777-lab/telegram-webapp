@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacTabak Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 15px 0;
+            scrollbar-width: none;
+            min-height: 70px;
+            align-items: center;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-btn {
+            padding: 15px 28px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 28px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 16px;
+            min-height: 46px;
+            line-height: 1;
+        }
+
+        .category-btn.active {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .products-container {
+            padding: 15px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 10px;
+        }
+
+        .product-image img {
+            max-width: 140px;
+            max-height: 140px;
+            object-fit: contain;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .product-desc {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .product-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .add-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .add-btn:active {
+            background: #2980b9;
+            transform: scale(0.9);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 20px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: #3498db;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 3px;
+            position: relative;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .cart-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 25px 25px 0 0;
+            padding: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .cart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #95a5a6;
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .cart-item-image {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8B7355 0%, #5C4033 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:active {
+            transform: scale(0.9);
+        }
+
+        .quantity {
+            font-weight: bold;
+            font-size: 16px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 50px 0;
+            color: #95a5a6;
+        }
+
+        .cart-empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .cart-summary {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .summary-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #27ae60 0%, #16a085 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.98);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+            animation: slideInRight 0.3s;
+            display: none;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .floating-cart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            background: #f0f8ff;
+        }
+
+        .floating-cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floating-cart-btn .cart-icon {
+            font-size: 28px;
+        }
+
+        .floating-cart-btn .floating-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #e74c3c;
+            color: white;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🍃 MacTabak</div>
+        <div class="categories">
+            <button class="category-btn active" onclick="filterCategory('all')">Все товары</button>
+            <button class="category-btn" onclick="filterCategory('табак')">Табак</button>
+            <button class="category-btn" onclick="filterCategory('уголь')">Уголь</button>
+            <button class="category-btn" onclick="filterCategory('аксессуары')">Аксессуары</button>
+            <button class="category-btn" onclick="filterCategory('кальяны')">Кальяны</button>
+        </div>
+    </div>
+
+    <div class="products-container">
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div class="nav-icon">🏠</div>
+            <div>Главная</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🔍</div>
+            <div>Поиск</div>
+        </div>
+        <div class="nav-item" onclick="openCart()">
+            <div class="nav-icon">
+                🛒
+                <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </div>
+            <div>Корзина</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Профиль</div>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <div class="cart-title">Корзина</div>
+                <button class="close-btn" onclick="closeCart()">✕</button>
+            </div>
+            <div id="cartItems"></div>
+            <div id="cartSummary"></div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <button class="floating-cart-btn" onclick="openCart()">
+        <span class="cart-icon">🛒</span>
+        <span class="floating-badge" id="floatingBadge" style="display: none;">0</span>
+    </button>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // База товаров - РЕАЛЬНЫЕ ТОВАРЫ ДЛЯ КАЛЬЯНА
+        const products = [
+            // ТАБАК
+            { id: 1, name: "Darkside Core", price: 550, category: "табак", img: "DARKSIDE", desc: "25г, премиум табак", badge: "ХИТ" },
+            { id: 2, name: "Brusko Medium", price: 290, category: "табак", img: "BRUSKO", desc: "50г, средняя крепость" },
+            { id: 3, name: "Spectrum Hard", price: 350, category: "табак", img: "SPECTRUM", desc: "40г, линейка Hard" },
+            { id: 4, name: "Element Earth", price: 450, category: "табак", img: "ELEMENT", desc: "25г, линия Земля" },
+            { id: 5, name: "Must Have", price: 650, category: "табак", img: "MUST HAVE", desc: "25г, премиум", badge: "NEW" },
+            { id: 6, name: "Black Burn", price: 390, category: "табак", img: "BLACK BURN", desc: "25г, крепкий" },
+            { id: 7, name: "Daily Hookah", price: 280, category: "табак", img: "DAILY", desc: "60г, легкий" },
+            { id: 8, name: "Tangiers Noir", price: 890, category: "табак", img: "TANGIERS", desc: "100г, американский", badge: "VIP" },
+
+            // УГОЛЬ
+            { id: 9, name: "Coconara 1kg", price: 450, category: "уголь", img: "COCO", desc: "Кокосовый, 72 куб." },
+            { id: 10, name: "Panda Pro 1kg", price: 390, category: "уголь", img: "PANDA", desc: "Кокосовый, 96 куб." },
+            { id: 11, name: "Qoco Turbo", price: 520, category: "уголь", img: "QOCO", desc: "Быстрый розжиг" },
+
+            // АКСЕССУАРЫ
+            { id: 12, name: "Калауд Lotus", price: 1990, category: "аксессуары", img: "KALOUD", desc: "Оригинал", badge: "TOP" },
+            { id: 13, name: "Силиконовая чаша", price: 890, category: "аксессуары", img: "ЧАША", desc: "Фаннел, большая" },
+            { id: 14, name: "Мундштук одноразовый", price: 150, category: "аксессуары", img: "100 ШТ", desc: "Упаковка 100шт" },
+            { id: 15, name: "Щипцы для угля", price: 350, category: "аксессуары", img: "ЩИПЦЫ", desc: "Нержавеющая сталь" },
+
+            // КАЛЬЯНЫ
+            { id: 16, name: "Alpha Hookah X", price: 12900, category: "кальяны", img: "ALPHA", desc: "Премиум кальян", badge: "LUXURY" },
+            { id: 17, name: "Maklaud Skytech", price: 8900, category: "кальяны", img: "MAKLAUD", desc: "Нержавеющая сталь" },
+            { id: 18, name: "Karma 3.0", price: 5900, category: "кальяны", img: "KARMA", desc: "Классический дизайн" },
+            { id: 19, name: "Bazooka 2.0", price: 3900, category: "кальяны", img: "BAZOOKA", desc: "Компактный" }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('mactabak_cart')) || {};
+        let currentCategory = 'all';
+
+        // Отображение товаров
+        function displayProducts(category = 'all') {
+            const grid = document.getElementById('productsGrid');
+            const filteredProducts = category === 'all'
+                ? products
+                : products.filter(p => p.category === category);
+
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+                        <img src="mactabak-logo.svg" alt="Mac Tabak Logo"/>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.desc}</div>
+                        <div class="product-bottom">
+                            <div class="product-price">${product.price} ₽</div>
+                            <button class="add-btn" onclick="addToCart(${product.id})">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Фильтрация категорий
+        function filterCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            displayProducts(category);
+        }
+
+        // Добавление в корзину
+        function addToCart(productId) {
+            if (!cart[productId]) {
+                cart[productId] = 0;
+            }
+            cart[productId]++;
+            saveCart();
+            updateCartBadge();
+
+            const product = products.find(p => p.id === productId);
+            showNotification(`${product.name} добавлен в корзину`);
+        }
+
+        // Сохранение корзины
+        function saveCart() {
+            localStorage.setItem('mactabak_cart', JSON.stringify(cart));
+        }
+
+        // Обновление значка корзины
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            const floatingBadge = document.getElementById('floatingBadge');
+            const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            if (count > 0) {
+                badge.style.display = 'flex';
+                badge.textContent = count;
+                floatingBadge.style.display = 'flex';
+                floatingBadge.textContent = count;
+            } else {
+                badge.style.display = 'none';
+                floatingBadge.style.display = 'none';
+            }
+        }
+
+        // Показ уведомления
+        function showNotification(text) {
+            const notification = document.getElementById('notification');
+            notification.textContent = text;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        // Открытие корзины
+        function openCart() {
+            document.getElementById('cartModal').style.display = 'block';
+            displayCartItems();
+        }
+
+        // Закрытие корзины
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        // Отображение товаров в корзине
+        function displayCartItems() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartSummaryDiv = document.getElementById('cartSummary');
+
+            if (Object.keys(cart).length === 0) {
+                cartItemsDiv.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <div>Корзина пуста</div>
+                    </div>
+                `;
+                cartSummaryDiv.innerHTML = '';
+                return;
+            }
+
+            let total = 0;
+            let itemsHtml = '';
+
+            Object.entries(cart).forEach(([productId, quantity]) => {
+                if (quantity > 0) {
+                    const product = products.find(p => p.id == productId);
+                    const subtotal = product.price * quantity;
+                    total += subtotal;
+
+                    itemsHtml += `
+                        <div class="cart-item">
+                            <div class="cart-item-image">${product.img}</div>
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${product.name}</div>
+                                <div class="cart-item-price">${product.price} ₽</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${productId}, -1)">−</button>
+                                <span class="quantity">${quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity(${productId}, 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            cartItemsDiv.innerHTML = itemsHtml;
+
+            // Определяем стоимость доставки
+            const deliveryCost = total >= 3000 ? 0 : 500;
+            const deliveryText = deliveryCost === 0 ? 'БЕСПЛАТНО' : `${deliveryCost} ₽`;
+
+            cartSummaryDiv.innerHTML = `
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Товары:</span>
+                        <span>${total} ₽</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Доставка:</span>
+                        <span style="color: ${deliveryCost === 0 ? '#27ae60' : 'inherit'}">
+                            ${deliveryText}
+                        </span>
+                    </div>
+                    ${total < 3000 ? `
+                        <div style="font-size: 12px; color: #7f8c8d; margin: 5px 0;">
+                            До бесплатной доставки: ${3000 - total} ₽
+                        </div>
+                    ` : ''}
+                    <div class="summary-total summary-row">
+                        <span>Итого:</span>
+                        <span>${total + deliveryCost} ₽</span>
+                    </div>
+                    <button class="checkout-btn" onclick="checkout()">
+                        Оформить заказ
+                    </button>
+                </div>
+            `;
+        }
+
+        // Изменение количества
+        function updateQuantity(productId, change) {
+            cart[productId] = (cart[productId] || 0) + change;
+            if (cart[productId] <= 0) {
+                delete cart[productId];
+            }
+            saveCart();
+            updateCartBadge();
+            displayCartItems();
+        }
+
+        // Оформление заказа
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                showNotification('Корзина пуста!');
+                return;
+            }
+
+            const total = Object.entries(cart).reduce((sum, [productId, qty]) => {
+                const product = products.find(p => p.id == productId);
+                return sum + (product.price * qty);
+            }, 0);
+
+            const deliveryCost = total >= 3000 ? 0 : 500;
+
+            const orderData = {
+                action: 'order',
+                items: Object.entries(cart).map(([productId, quantity]) => {
+                    const product = products.find(p => p.id == productId);
+                    return {
+                        name: product.name,
+                        price: product.price,
+                        quantity: quantity
+                    };
+                }),
+                subtotal: total,
+                delivery: deliveryCost,
+                total: total + deliveryCost
+            };
+
+            if (tg) {
+                tg.sendData(JSON.stringify(orderData));
+                tg.close();
+            } else {
+                alert('Заказ отправлен! Итого: ' + (total + deliveryCost) + ' ₽');
+                cart = {};
+                saveCart();
+                updateCartBadge();
+                closeCart();
+            }
+        }
+
+        // Закрытие модалки по клику вне
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('cartModal')) {
+                closeCart();
+            }
+        }
+
+        // Инициализация
+        displayProducts();
+        updateCartBadge();
+    </script>
+</body>
+</html>
