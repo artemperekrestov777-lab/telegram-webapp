@@ -209,7 +209,7 @@ bot.onText(/\/admin(.*)/, async (msg, match) => {
     }
 
     // Send admin panel link
-    const adminUrl = `https://artemperekrestov777-lab.github.io/telegram-webapp/admin/`;
+    const adminUrl = `https://artemperekrestov777-lab.github.io/telegram-webapp/admin_panel/`;
 
     const keyboard = {
         inline_keyboard: [[
