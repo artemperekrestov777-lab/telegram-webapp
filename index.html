@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>МакТабак - Лучший Табачный Магазин</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-content">
+            <h1 class="welcome-title-top">Добро Пожаловать!</h1>
+            <img src="mactabak-logo.png" alt="МакТабак" class="welcome-logo">
+            <h1 class="welcome-title-bottom">Лучший Табачный Магазин</h1>
+            <button class="catalog-btn" onclick="openCatalog()">
+                <span class="btn-icon">🛍</span>
+                <span class="btn-text">Каталог</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Shop -->
+    <div id="mainShop" class="main-shop hidden">
+        <!-- Header -->
+        <header class="shop-header">
+            <button class="back-btn" onclick="goBack()" id="backBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+
+            <div class="header-controls">
+                <!-- Sort Button -->
+                <button class="sort-btn" onclick="openSortMenu()">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" fill="currentColor"/>
+                    </svg>
+                </button>
+
+                <!-- Categories -->
+                <div class="categories-scroll" id="categoriesScroll">
+                    <div class="categories-container" id="categoriesContainer"></div>
+                </div>
+
+                <!-- Search Button -->
+                <button class="search-btn" onclick="openSearch()">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sort Menu -->
+        <div id="sortMenu" class="sort-menu hidden">
+            <div class="sort-options">
+                <button onclick="sortProducts('default')">По умолчанию</button>
+                <button onclick="sortProducts('priceAsc')">По возрастанию цены ↑</button>
+                <button onclick="sortProducts('priceDesc')">По убыванию цены ↓</button>
+                <button onclick="sortProducts('new')">По новинкам</button>
+            </div>
+        </div>
+
+        <!-- Search Modal -->
+        <div id="searchModal" class="search-modal hidden">
+            <div class="search-header">
+                <input type="text" id="searchInput" placeholder="Поиск товаров..." oninput="searchProducts()">
+                <button onclick="closeSearch()">✕</button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid"></div>
+
+        <!-- Product Modal -->
+        <div id="productModal" class="product-modal hidden">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeProductModal()">✕</button>
+                <img id="modalProductImage" src="" alt="">
+                <h2 id="modalProductName"></h2>
+                <p id="modalProductDescription"></p>
+                <div class="modal-price" id="modalProductPrice"></div>
+                <button class="add-to-cart-btn" onclick="addToCartFromModal()">Добавить в корзину</button>
+            </div>
+        </div>
+
+        <!-- Cart Button -->
+        <button class="cart-fab" onclick="openCart()" id="cartFab">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" fill="white"/>
+            </svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+    </div>
+
+    <!-- Cart -->
+    <div id="cart" class="cart hidden">
+        <div class="cart-header">
+            <h2>Корзина</h2>
+            <button class="cart-close" onclick="closeCart()">✕</button>
+        </div>
+
+        <div id="cartEmpty" class="cart-empty">
+            <div class="empty-cart-icon">🚬</div>
+            <p>Корзина пуста</p>
+            <button class="return-shopping-btn" onclick="closeCart()">Вернуться к покупкам</button>
+        </div>
+
+        <div id="cartContent" class="cart-content hidden">
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-footer">
+                <button class="clear-cart-btn" onclick="clearCart()">Очистить корзину</button>
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span id="cartTotal">0 ₽</span>
+                </div>
+                <button class="checkout-btn" onclick="openCheckout()">
+                    <span>Оформить заказ</span>
+                    <span id="checkoutTotal">0 ₽</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout -->
+    <div id="checkout" class="checkout hidden">
+        <div class="checkout-header">
+            <button class="checkout-back" onclick="backToCart()">←</button>
+            <h2>Оформление заказа</h2>
+        </div>
+
+        <form id="checkoutForm" class="checkout-form">
+            <div class="form-group">
+                <label for="fullName">ФИО полностью*</label>
+                <input type="text" id="fullName" name="fullName" required pattern="[А-Яа-яЁё\s]{10,100}"
+                       placeholder="Иванов Иван Иванович">
+                <span class="error-message">Укажите полные ФИО</span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Номер телефона*</label>
+                <input type="tel" id="phone" name="phone" required pattern="[+]?[0-9]{11,12}"
+                       placeholder="+79991234567">
+                <span class="error-message">Укажите корректный номер телефона</span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                <span class="error-message">Укажите корректный email</span>
+            </div>
+
+            <div class="form-group">
+                <label for="city">Город и регион доставки*</label>
+                <input type="text" id="city" name="city" required placeholder="Москва">
+                <span class="error-message">Укажите город и регион</span>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Адрес доставки*</label>
+                <textarea id="address" name="address" required rows="3"
+                          placeholder="ул. Ленина, д. 1, кв. 1"></textarea>
+                <span class="error-message">Укажите полный адрес доставки</span>
+            </div>
+
+            <div class="form-group">
+                <label for="delivery">Способ доставки*</label>
+                <select id="delivery" name="delivery" required onchange="updateDeliveryPrice()">
+                    <option value="">Выберите способ доставки</option>
+                    <option value="pochta">Почта России - 500 ₽</option>
+                    <option value="cdek">СДЭК - 600 ₽</option>
+                </select>
+                <span class="error-message">Выберите способ доставки</span>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Комментарий к заказу</label>
+                <textarea id="comment" name="comment" rows="3" placeholder="Дополнительная информация"></textarea>
+            </div>
+
+            <div class="checkout-total">
+                <div class="total-row">
+                    <span>Товары:</span>
+                    <span id="checkoutSubtotal">0 ₽</span>
+                </div>
+                <div class="total-row">
+                    <span>Доставка:</span>
+                    <span id="deliveryPrice">0 ₽</span>
+                </div>
+                <div class="total-row total-final">
+                    <span>Итого к оплате:</span>
+                    <span id="finalTotal">0 ₽</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-order-btn">Оплатить заказ</button>
+        </form>
+    </div>
+
+    <!-- Admin Panel (hidden by default) -->
+    <div id="adminPanel" class="admin-panel hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
