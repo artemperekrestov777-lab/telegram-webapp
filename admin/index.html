@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МакТабак - Админ панель</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Админ панель МакТабак</h1>
+            <button class="sync-btn" onclick="syncWithGitHub()">
+                <span>🔄</span> Синхронизировать с GitHub
+            </button>
+        </header>
+
+        <div class="admin-content">
+            <!-- Categories Selection -->
+            <div class="section">
+                <h2>Управление товарами</h2>
+                <div class="controls">
+                    <select id="categorySelect" onchange="loadCategoryProducts()">
+                        <option value="">Выберите категорию</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddProduct()">➕ Добавить товар</button>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            <div class="products-list" id="productsList"></div>
+        </div>
+
+        <!-- Add/Edit Product Modal -->
+        <div id="productModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Добавить товар</h2>
+                    <button class="modal-close" onclick="closeProductModal()">✕</button>
+                </div>
+
+                <form id="productForm" onsubmit="saveProduct(event)">
+                    <div class="form-group">
+                        <label for="productName">Название товара*</label>
+                        <input type="text" id="productName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Категория*</label>
+                        <select id="productCategory" required>
+                            <option value="">Выберите категорию</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productUnit">Единица измерения*</label>
+                        <select id="productUnit" onchange="toggleWeightField()" required>
+                            <option value="piece">Штука</option>
+                            <option value="weight">Вес</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="weightGroup" style="display:none;">
+                        <label for="productWeight">Вес упаковки (г)*</label>
+                        <input type="number" id="productWeight" min="1" value="250">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Цена (₽)*</label>
+                        <input type="number" id="productPrice" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Описание</label>
+                        <textarea id="productDescription" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productImage">Фото товара</label>
+                        <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal hidden">
+            <div class="modal-content modal-small">
+                <h3>Подтверждение удаления</h3>
+                <p>Вы уверены, что хотите удалить этот товар?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeDeleteModal()">Отмена</button>
+                    <button class="btn btn-danger" onclick="confirmDelete()">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

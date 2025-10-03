@@ -1,0 +1,454 @@
+{
+  "categories": [
+    { "id": "all", "name": "Все", "icon": "🏪" },
+    { "id": "new", "name": "Новинки от МАК ТАБАК", "icon": "✨" },
+    { "id": "standard", "name": "Стандартные бленды", "icon": "📦" },
+    { "id": "aromatic", "name": "Ароматизированные бленды", "icon": "🌸" },
+    { "id": "pipe", "name": "Трубочные бленды", "icon": "🚬" },
+    { "id": "sleeves", "name": "Сигаретные гильзы", "icon": "🎯" },
+    { "id": "custom", "name": "Собрать свой набор", "icon": "🎨" },
+    { "id": "mactabak", "name": "Продукция от МАКТАБАК", "icon": "💎" },
+    { "id": "pipes", "name": "Курительные трубки", "icon": "🔧" },
+    { "id": "machines", "name": "Машинки для набивки", "icon": "⚙️" },
+    { "id": "tea", "name": "Китайский чай", "icon": "🍵" },
+    { "id": "tamper", "name": "Тампер", "icon": "🔨" }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Зажигалка для трубки spunk-baofa (3)",
+      "category": "new",
+      "price": 800,
+      "unit": "piece",
+      "image": "",
+      "description": "Качественная зажигалка для трубки",
+      "inStock": true
+    },
+    {
+      "id": 2,
+      "name": "Зажигалка для трубки honest (3)",
+      "category": "new",
+      "price": 900,
+      "unit": "piece",
+      "image": "",
+      "description": "Надежная зажигалка honest",
+      "inStock": true
+    },
+    {
+      "id": 3,
+      "name": "Премиум гильзы ocb 500 black (1)",
+      "category": "new",
+      "price": 600,
+      "unit": "piece",
+      "image": "",
+      "description": "Премиальные гильзы высокого качества",
+      "inStock": true
+    },
+    {
+      "id": 4,
+      "name": "Машинка набивочная led 1 (3)",
+      "category": "new",
+      "price": 3000,
+      "unit": "piece",
+      "image": "",
+      "description": "Современная набивочная машинка с LED подсветкой",
+      "inStock": true
+    },
+    {
+      "id": 5,
+      "name": "Сумка кожаная muxiang № 013 (1099) (1)",
+      "category": "new",
+      "price": 4800,
+      "unit": "piece",
+      "image": "",
+      "description": "Элегантная кожаная сумка для табачных аксессуаров",
+      "inStock": true
+    },
+    {
+      "id": 6,
+      "name": "Шторм storm",
+      "category": "standard",
+      "price": 1700,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Классический бленд Шторм",
+      "inStock": true
+    },
+    {
+      "id": 7,
+      "name": "Легенда legend",
+      "category": "standard",
+      "price": 1700,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Легендарный бленд",
+      "inStock": true
+    },
+    {
+      "id": 8,
+      "name": "Красный дракон red dragon",
+      "category": "standard",
+      "price": 1700,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Насыщенный бленд Красный дракон",
+      "inStock": true
+    },
+    {
+      "id": 9,
+      "name": "Маршал marshal",
+      "category": "standard",
+      "price": 1700,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Крепкий бленд Маршал",
+      "inStock": true
+    },
+    {
+      "id": 10,
+      "name": "Mac - винстон winston",
+      "category": "standard",
+      "price": 1950,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Премиальный бленд Mac Winston",
+      "inStock": true
+    },
+    {
+      "id": 11,
+      "name": "Мак микс",
+      "category": "aromatic",
+      "price": 2200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Ароматизированный микс",
+      "inStock": true
+    },
+    {
+      "id": 12,
+      "name": "Бленд - юбилейный",
+      "category": "aromatic",
+      "price": 2200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Праздничный юбилейный бленд",
+      "inStock": true
+    },
+    {
+      "id": 13,
+      "name": "Х - бленд",
+      "category": "aromatic",
+      "price": 2200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Эксклюзивный X-бленд",
+      "inStock": true
+    },
+    {
+      "id": 14,
+      "name": "Кофе coffee",
+      "category": "aromatic",
+      "price": 2200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Ароматный кофейный бленд",
+      "inStock": true
+    },
+    {
+      "id": 15,
+      "name": "Captain black cream капитан черный крем",
+      "category": "pipe",
+      "price": 1200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Мягкий кремовый трубочный табак",
+      "inStock": true
+    },
+    {
+      "id": 16,
+      "name": "Captain black platinum капитан черный платиновый",
+      "category": "pipe",
+      "price": 1200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Премиальный платиновый трубочный табак",
+      "inStock": true
+    },
+    {
+      "id": 17,
+      "name": "Монарх monarch",
+      "category": "pipe",
+      "price": 1200,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Королевский трубочный табак",
+      "inStock": true
+    },
+    {
+      "id": 18,
+      "name": "Трубочный мак табак",
+      "category": "pipe",
+      "price": 1000,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Классический трубочный табак",
+      "inStock": true
+    },
+    {
+      "id": 19,
+      "name": "Гильзы с фильтром mascotte x-long (200 шт)",
+      "category": "sleeves",
+      "price": 350,
+      "unit": "piece",
+      "image": "",
+      "description": "Удлиненные гильзы с фильтром",
+      "inStock": true
+    },
+    {
+      "id": 20,
+      "name": "Гильзы с фильтром mascotte carbon (200 шт)",
+      "category": "sleeves",
+      "price": 400,
+      "unit": "piece",
+      "image": "",
+      "description": "Гильзы с угольным фильтром",
+      "inStock": true
+    },
+    {
+      "id": 21,
+      "name": "Гильзы с фильтром mascotte classic (200 шт)",
+      "category": "sleeves",
+      "price": 300,
+      "unit": "piece",
+      "image": "",
+      "description": "Классические гильзы с фильтром",
+      "inStock": true
+    },
+    {
+      "id": 22,
+      "name": "Гильзы american aviator slim white tipping with silver line xl 724мм",
+      "category": "sleeves",
+      "price": 200,
+      "unit": "piece",
+      "image": "",
+      "description": "Слим гильзы с серебряной линией",
+      "inStock": true
+    },
+    {
+      "id": 23,
+      "name": "Кофе",
+      "category": "custom",
+      "price": 800,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Компонент для создания собственного набора",
+      "inStock": true
+    },
+    {
+      "id": 24,
+      "name": "Звар",
+      "category": "custom",
+      "price": 880,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Компонент для создания собственного набора",
+      "inStock": true
+    },
+    {
+      "id": 25,
+      "name": "Халфзвар",
+      "category": "custom",
+      "price": 880,
+      "unit": "weight",
+      "packageWeight": 250,
+      "image": "",
+      "description": "Компонент для создания собственного набора",
+      "inStock": true
+    },
+    {
+      "id": 26,
+      "name": "Mac luxury №3",
+      "category": "mactabak",
+      "price": 1500,
+      "unit": "piece",
+      "image": "",
+      "description": "Премиальная продукция Mac luxury",
+      "inStock": true
+    },
+    {
+      "id": 27,
+      "name": "Mac luxury",
+      "category": "mactabak",
+      "price": 1500,
+      "unit": "piece",
+      "image": "",
+      "description": "Премиальная продукция Mac luxury",
+      "inStock": true
+    },
+    {
+      "id": 28,
+      "name": "Стильный портсигар- х2",
+      "category": "mactabak",
+      "price": 1800,
+      "unit": "piece",
+      "image": "",
+      "description": "Элегантный портсигар на 2 отделения",
+      "inStock": true
+    },
+    {
+      "id": 29,
+      "name": "Стильный портсигар- х3",
+      "category": "mactabak",
+      "price": 1800,
+      "unit": "piece",
+      "image": "",
+      "description": "Элегантный портсигар на 3 отделения",
+      "inStock": true
+    },
+    {
+      "id": 30,
+      "name": "Трубка mr burning 220",
+      "category": "pipes",
+      "price": 3500,
+      "unit": "piece",
+      "image": "",
+      "description": "Качественная курительная трубка",
+      "inStock": true
+    },
+    {
+      "id": 31,
+      "name": "Muxang briar № 888",
+      "category": "pipes",
+      "price": 8000,
+      "unit": "piece",
+      "image": "",
+      "description": "Премиальная трубка из бриара",
+      "inStock": true
+    },
+    {
+      "id": 32,
+      "name": "Mr.brog №63 zurek 9мм груша (фильтр)",
+      "category": "pipes",
+      "price": 2000,
+      "unit": "piece",
+      "image": "",
+      "description": "Трубка с фильтром в форме груши",
+      "inStock": true
+    },
+    {
+      "id": 33,
+      "name": "Трубка muxiang bulldog",
+      "category": "pipes",
+      "price": 5500,
+      "unit": "piece",
+      "image": "",
+      "description": "Классическая трубка форма бульдог",
+      "inStock": true
+    },
+    {
+      "id": 34,
+      "name": "Машинка набивочная ocb easy slide",
+      "category": "machines",
+      "price": 4000,
+      "unit": "piece",
+      "image": "",
+      "description": "Удобная машинка для набивки",
+      "inStock": true
+    },
+    {
+      "id": 35,
+      "name": "Машинка набивочная injectormatic 2",
+      "category": "machines",
+      "price": 2500,
+      "unit": "piece",
+      "image": "",
+      "description": "Автоматическая машинка для набивки",
+      "inStock": true
+    },
+    {
+      "id": 36,
+      "name": "Машинка набивочная led",
+      "category": "machines",
+      "price": 3000,
+      "unit": "piece",
+      "image": "",
+      "description": "Машинка с LED подсветкой",
+      "inStock": true
+    },
+    {
+      "id": 37,
+      "name": "Машинка набивочная injectormatic 2 серебро",
+      "category": "machines",
+      "price": 2500,
+      "unit": "piece",
+      "image": "",
+      "description": "Автоматическая машинка серебряного цвета",
+      "inStock": true
+    },
+    {
+      "id": 38,
+      "name": "Шу пуэра из линьцанского сырья урожая 2017",
+      "category": "tea",
+      "price": 1000,
+      "unit": "piece",
+      "image": "",
+      "description": "Выдержанный чай пуэр",
+      "inStock": true
+    },
+    {
+      "id": 39,
+      "name": "Чай улун да хун пао большой красный халат в 100 граммовой плитке (прессованный)",
+      "category": "tea",
+      "price": 1800,
+      "unit": "piece",
+      "image": "",
+      "description": "Элитный прессованный улун",
+      "inStock": true
+    },
+    {
+      "id": 40,
+      "name": "Чай фуцзянь хун ча красный чай из фуцзяня 500 г.",
+      "category": "tea",
+      "price": 2300,
+      "unit": "piece",
+      "image": "",
+      "description": "Красный чай из провинции Фуцзянь",
+      "inStock": true
+    },
+    {
+      "id": 41,
+      "name": "Шу пуэр золотой павлин 2012 г. блин 357 г.",
+      "category": "tea",
+      "price": 2200,
+      "unit": "piece",
+      "image": "",
+      "description": "Коллекционный пуэр 2012 года",
+      "inStock": true
+    },
+    {
+      "id": 42,
+      "name": "Тампер №1",
+      "category": "tamper",
+      "price": 1500,
+      "unit": "piece",
+      "image": "",
+      "description": "Профессиональный тампер для трубки",
+      "inStock": true
+    }
+  ]
+}
