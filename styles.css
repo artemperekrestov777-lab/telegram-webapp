@@ -131,6 +131,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0; /* Allow flex item to shrink below content size */
 }
 
 .sort-btn,
@@ -160,6 +161,8 @@ body {
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    min-width: 0; /* Critical for flex overflow */
+    position: relative;
 }
 
 .categories-scroll::-webkit-scrollbar {
@@ -167,11 +170,11 @@ body {
 }
 
 .categories-container {
-    display: flex;
+    display: inline-flex; /* Changed from flex to inline-flex */
     gap: 10px;
-    padding: 5px;
+    padding: 5px 10px;
     white-space: nowrap;
-    min-width: min-content;
+    min-width: max-content; /* Ensure container is at least as wide as content */
 }
 
 .category-btn {

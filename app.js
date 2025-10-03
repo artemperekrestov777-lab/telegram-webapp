@@ -222,11 +222,13 @@ function updateCartBadge() {
 // Render functions
 function renderCategories() {
     const container = document.getElementById('categoriesContainer');
+    const scrollContainer = document.getElementById('categoriesScroll');
     container.innerHTML = '';
 
-    state.categories.forEach(category => {
+    state.categories.forEach((category, index) => {
         const btn = document.createElement('button');
         btn.className = 'category-btn';
+        btn.setAttribute('data-category-id', category.id);
         if (category.id === state.currentCategory) {
             btn.classList.add('active');
         }
@@ -234,6 +236,18 @@ function renderCategories() {
         btn.onclick = () => selectCategory(category.id);
         container.appendChild(btn);
     });
+
+    // Scroll to active category after rendering
+    setTimeout(() => {
+        const activeBtn = container.querySelector('.category-btn.active');
+        if (activeBtn && scrollContainer) {
+            const scrollLeft = activeBtn.offsetLeft - (scrollContainer.offsetWidth / 2) + (activeBtn.offsetWidth / 2);
+            scrollContainer.scrollTo({
+                left: Math.max(0, scrollLeft),
+                behavior: 'smooth'
+            });
+        }
+    }, 100);
 }
 
 function renderProducts() {
