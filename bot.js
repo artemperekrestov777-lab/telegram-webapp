@@ -95,10 +95,47 @@ async function generateOrderNumber() {
 const userSessions = new Map();
 const cartStorage = new Map();
 
+// Anti-spam protection
+const userMessageTimestamps = new Map();
+const MESSAGE_COOLDOWN = 1000; // 1 second between messages
+const MAX_MESSAGES_PER_MINUTE = 20;
+
+function checkSpam(userId) {
+    const now = Date.now();
+    const userTimestamps = userMessageTimestamps.get(userId) || [];
+
+    // Remove old timestamps (older than 1 minute)
+    const recentTimestamps = userTimestamps.filter(ts => now - ts < 60000);
+
+    // Check if user exceeded rate limit
+    if (recentTimestamps.length >= MAX_MESSAGES_PER_MINUTE) {
+        return false; // User is spamming
+    }
+
+    // Check cooldown
+    if (recentTimestamps.length > 0) {
+        const lastMessage = recentTimestamps[recentTimestamps.length - 1];
+        if (now - lastMessage < MESSAGE_COOLDOWN) {
+            return false; // Too fast
+        }
+    }
+
+    // Add new timestamp
+    recentTimestamps.push(now);
+    userMessageTimestamps.set(userId, recentTimestamps);
+
+    return true; // Message allowed
+}
+
 // Bot commands
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+
+    // Check for spam
+    if (!checkSpam(userId)) {
+        return; // Ignore spammer
+    }
 
     // Initialize user session
     if (!userSessions.has(userId)) {
@@ -111,20 +148,24 @@ bot.onText(/\/start/, async (msg) => {
         });
     }
 
-    const welcomeMessage = `Привет, это МАКТАБАК!
+    // Check if user has items in cart
+    const userCart = cartStorage.get(userId);
+    let cartReminder = '';
+    if (userCart && userCart.length > 0) {
+        const cartCount = userCart.reduce((sum, item) => sum + item.quantity, 0);
+        cartReminder = `\n\n🛒 У вас есть ${cartCount} товаров в корзине!\n⏰ Доступность товаров ограничена по времени.`;
+    }
 
-Рады видеть вас в онлайн-магазине МакТабак.
+    const welcomeMessage = `🎉 Добро Пожаловать!
 
-Здесь вы найдете каталог с нашими товарами и сможете оформить заказ за пару минут, выбрать удобный для вас способ оплаты и воспользоваться сервисом Доставки.
+🏆 Лучший Табачный Магазин
 
-Чтобы приступить к покупкам, перейдите в «Каталог».
-
-Приятных покупок!`;
+Нажмите кнопку "Каталог" чтобы начать покупки.${cartReminder}`;
 
     const keyboard = {
         inline_keyboard: [[
             {
-                text: 'Каталог',
+                text: '🛍 Каталог',
                 web_app: { url: `${WEBAPP_URL}?userId=${userId}` }
             }
         ]]
@@ -148,64 +189,6 @@ bot.onText(/\/start/, async (msg) => {
     }
 });
 
-// Handle callback queries (button presses)
-bot.on('callback_query', async (callbackQuery) => {
-    const action = callbackQuery.data;
-    const msg = callbackQuery.message;
-
-    if (action.startsWith('order_processed_')) {
-        const orderNumber = action.replace('order_processed_', '');
-
-        // Update message
-        const updatedText = msg.text + '\n\n✅ <b>ЗАКАЗ ОБРАБОТАН</b>';
-
-        await bot.editMessageText(updatedText, {
-            chat_id: msg.chat.id,
-            message_id: msg.message_id,
-            parse_mode: 'HTML'
-        });
-
-        // Send confirmation alert
-        await bot.answerCallbackQuery(callbackQuery.id, {
-            text: `✅ Заказ ${orderNumber} отмечен как обработанный`,
-            show_alert: true
-        });
-    }
-});
-
-// Admin command
-bot.onText(/\/admin/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    console.log(`Admin command from user ${userId}`);
-
-    // Check admin rights - replace with your admin ID
-    const ADMIN_IDS = [parseInt(ADMIN_ID)]; // Using ADMIN_ID from .env
-
-    if (!ADMIN_IDS.includes(userId)) {
-        await bot.sendMessage(chatId, '❌ У вас нет прав администратора');
-        return;
-    }
-
-    const adminMessage = `🔧 Панель администратора
-
-Нажмите кнопку ниже для открытия админ-панели:`;
-
-    const keyboard = {
-        inline_keyboard: [[
-            {
-                text: '🔧 Открыть админ-панель',
-                web_app: { url: `${WEBAPP_URL}?admin=true` }
-            }
-        ]]
-    };
-
-    await bot.sendMessage(chatId, adminMessage, {
-        reply_markup: keyboard
-    });
-});
-
 // WebApp data handler
 bot.on('web_app_data', async (msg) => {
     const chatId = msg.chat.id;
@@ -214,75 +197,7 @@ bot.on('web_app_data', async (msg) => {
     try {
         switch(data.action) {
             case 'order':
-                // Check if this is a Moscow order that needs special manager notification
-                if (data.isFromMoscow && data.managerMessage) {
-                    // Send enhanced notification to manager
-                    const MANAGER_CHAT_ID = ADMIN_ID;
-
-                    // Formatted message for manager
-                    const managerNotification = `
-🔔 <b>НОВЫЙ ЗАКАЗ ИЗ МОСКВЫ!</b>
-
-📦 <b>Заказ №:</b> ${data.orderNumber}
-👤 <b>Клиент:</b> ${data.userData.fullName}
-📱 <b>Телефон:</b> ${data.userData.phone}
-📧 <b>Email:</b> ${data.userData.email}
-🏠 <b>Адрес:</b> ${data.userData.city}, ${data.userData.address}
-
-🛒 <b>Товары:</b>
-${data.cart.map(item => `• ${item.name} - ${item.quantity} ${item.unit === 'weight' ? 'г' : 'шт'} x ${item.price}₽`).join('\n')}
-
-💰 <b>Итого:</b> ${data.totalAmount} ₽
-🚚 <b>Доставка:</b> ${data.deliveryMethod}
-
-📝 <b>Комментарий:</b> ${data.userData.comment || 'Отсутствует'}
-
-⚡ <b>Требуется связаться с клиентом для выставления счета!</b>
-                    `;
-
-                    // Quick action buttons
-                    const keyboard = {
-                        inline_keyboard: [
-                            [
-                                {
-                                    text: '📞 Позвонить',
-                                    url: `tel:${data.userData.phone}`
-                                },
-                                {
-                                    text: '✉️ Написать на email',
-                                    url: `mailto:${data.userData.email}`
-                                }
-                            ],
-                            [
-                                {
-                                    text: '✅ Заказ обработан',
-                                    callback_data: `order_processed_${data.orderNumber}`
-                                }
-                            ]
-                        ]
-                    };
-
-                    try {
-                        // Send notification to manager
-                        await bot.sendMessage(MANAGER_CHAT_ID, managerNotification, {
-                            parse_mode: 'HTML',
-                            reply_markup: keyboard
-                        });
-
-                        // Confirm to client
-                        await bot.sendMessage(chatId,
-                            `✅ Ваш заказ ${data.orderNumber} принят!\n\n` +
-                            `Менеджер свяжется с вами в ближайшее время для выставления счета.\n` +
-                            `📧 Email для связи: ${process.env.MANAGER_EMAIL}`
-                        );
-                    } catch (error) {
-                        console.error('Error sending manager notification:', error);
-                        await bot.sendMessage(chatId, '❌ Произошла ошибка при отправке заказа. Попробуйте позже.');
-                    }
-                } else {
-                    // Regular order processing
-                    await processOrder(chatId, msg.from.id, data);
-                }
+                await processOrder(chatId, msg.from.id, data);
                 break;
             case 'saveCart':
                 saveUserCart(msg.from.id, data.cart);
@@ -430,6 +345,8 @@ function saveUserCart(userId, cart) {
         session.cart = cart;
         userSessions.set(userId, session);
     }
+    // Also save to cartStorage for cart reminder
+    cartStorage.set(userId, cart);
 }
 
 // Send user data
@@ -489,58 +406,6 @@ app.post('/api/cart/:userId', (req, res) => {
 
     saveUserCart(userId, cart);
     res.json({ success: true });
-});
-
-// API endpoint for manager notifications (backup method)
-app.post('/api/notify-manager', async (req, res) => {
-    try {
-        const { orderNumber, clientName, phone, email, city, address, cart, totalAmount, deliveryMethod, comment, message } = req.body;
-        const MANAGER_CHAT_ID = ADMIN_ID;
-
-        // Formatted message for manager
-        let managerNotification;
-        if (message) {
-            managerNotification = message;
-        } else {
-            managerNotification = `
-🔔 <b>НОВЫЙ ЗАКАЗ!</b>
-
-📦 <b>Заказ №:</b> ${orderNumber}
-👤 <b>Клиент:</b> ${clientName}
-📱 <b>Телефон:</b> ${phone}
-📧 <b>Email:</b> ${email}
-🏠 <b>Адрес:</b> ${city}, ${address}
-
-💰 <b>Сумма:</b> ${totalAmount} ₽
-
-⚡ <b>Требуется связаться с клиентом!</b>
-            `;
-        }
-
-        // Quick action buttons
-        const keyboard = {
-            inline_keyboard: [
-                [
-                    { text: '📞 Позвонить', url: `tel:${phone}` },
-                    { text: '✉️ Написать на email', url: `mailto:${email}` }
-                ],
-                [
-                    { text: '✅ Заказ обработан', callback_data: `order_processed_${orderNumber}` }
-                ]
-            ]
-        };
-
-        // Send notification to manager
-        await bot.sendMessage(MANAGER_CHAT_ID, managerNotification, {
-            parse_mode: 'HTML',
-            reply_markup: keyboard
-        });
-
-        res.json({ success: true, message: 'Manager notified' });
-    } catch (error) {
-        console.error('Error notifying manager:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
 });
 
 // Admin API endpoints

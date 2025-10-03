@@ -164,21 +164,8 @@ function saveCart() {
 }
 
 function addToCart(productId) {
-    console.log('=== ОТЛАДКА addToCart ===');
-    console.log('Ищем товар с ID:', productId, 'тип:', typeof productId);
-    console.log('Все товары в state.products:', state.products);
-    console.log('ID товаров:', state.products.map(p => ({ id: p.id, type: typeof p.id, name: p.name })));
-
-    const product = state.products.find(p => {
-        console.log(`Сравниваем: p.id=${p.id} (${typeof p.id}) с productId=${productId} (${typeof productId})`);
-        return p.id == productId; // Используем нестрогое сравнение
-    });
-
-    if (!product) {
-        console.error('Товар не найден!');
-        return;
-    }
-    console.log('Найден товар:', product);
+    const product = state.products.find(p => p.id === productId);
+    if (!product) return;
 
     const existing = state.cart.find(item => item.id === productId);
     if (existing) {
@@ -285,10 +272,17 @@ function createProductCard(product) {
     card.className = 'product-card';
     card.onclick = () => openProductModal(product);
 
-    const icon = getProductIcon(product);
+    // Show real image if available, otherwise show icon
+    let imageContent;
+    if (product.image && product.image.trim() !== '') {
+        imageContent = `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+    } else {
+        const icon = getProductIcon(product);
+        imageContent = `<div style="font-size: 48px; display: flex; align-items: center; justify-content: center; height: 100%;">${icon}</div>`;
+    }
 
     card.innerHTML = `
-        <div class="product-image">${icon}</div>
+        <div class="product-image">${imageContent}</div>
         <div class="product-info">
             <div class="product-name">${product.name}</div>
             <div class="product-price">${product.price} ₽</div>
@@ -446,10 +440,18 @@ function searchProducts() {
 function openProductModal(product) {
     state.currentProductModal = product;
     const modal = document.getElementById('productModal');
-    const icon = getProductIcon(product);
 
-    document.getElementById('modalProductImage').style.background = '#F5F7FA';
-    document.getElementById('modalProductImage').innerHTML = `<div style="font-size:60px;text-align:center;padding:40px;">${icon}</div>`;
+    // Show real image if available, otherwise show icon
+    const imageContainer = document.getElementById('modalProductImage');
+    if (product.image && product.image.trim() !== '') {
+        imageContainer.style.background = '#F5F7FA';
+        imageContainer.innerHTML = `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain;">`;
+    } else {
+        const icon = getProductIcon(product);
+        imageContainer.style.background = '#F5F7FA';
+        imageContainer.innerHTML = `<div style="font-size:60px;text-align:center;padding:40px;">${icon}</div>`;
+    }
+
     document.getElementById('modalProductName').textContent = product.name;
     document.getElementById('modalProductDescription').textContent = product.description || '';
     document.getElementById('modalProductPrice').textContent = `${product.price} ₽`;
@@ -553,6 +555,20 @@ document.getElementById('checkoutForm').addEventListener('submit', async (e) => 
     if (!isValid) {
         alert('Пожалуйста, заполните все обязательные поля корректно');
         return;
+    }
+
+    // Check minimum weight for weight-based products (1kg)
+    const weightProducts = state.cart.filter(item => item.unit === 'weight');
+    if (weightProducts.length > 0) {
+        const totalWeight = weightProducts.reduce((sum, item) => {
+            const weight = item.packageWeight || 250; // default weight 250g
+            return sum + (item.quantity * weight);
+        }, 0);
+
+        if (totalWeight < 1000) {
+            alert(`⚠️ Минимальный объём заказа по весовым товарам от 1 кг\n\nТекущий вес: ${totalWeight}г`);
+            return;
+        }
     }
 
     // Save user data

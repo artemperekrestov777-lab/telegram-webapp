@@ -38,7 +38,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,7 +47,7 @@ body {
 
 .welcome-content {
     text-align: center;
-    color: white;
+    color: #333;
     padding: 20px;
 }
 
@@ -56,16 +56,14 @@ body {
     font-size: 24px;
     font-weight: bold;
     margin: 20px 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    color: #333;
 }
 
 .welcome-logo {
-    width: 120px;
-    height: 120px;
-    border-radius: 20px;
-    background: white;
-    padding: 10px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    margin: 20px 0;
 }
 
 .catalog-btn {

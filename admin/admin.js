@@ -21,33 +21,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load data from local storage or GitHub
 async function loadData() {
     try {
-        // Try to load from local API first
-        const response = await fetch('/api/products');
+        // Try to load from GitHub
+        const response = await fetch(`${GITHUB_RAW}/${GITHUB_REPO}/main/data/products.json`);
         const data = await response.json();
         state.products = data.products;
         state.categories = data.categories;
         localStorage.setItem('admin_products', JSON.stringify(data));
     } catch (error) {
-        console.error('Failed to load from API:', error);
-        try {
-            // Try GitHub as fallback
-            const response = await fetch(`${GITHUB_RAW}/${GITHUB_REPO}/main/data/products.json`);
-            const data = await response.json();
+        console.error('Failed to load from GitHub:', error);
+        // Load from local storage
+        const cached = localStorage.getItem('admin_products');
+        if (cached) {
+            const data = JSON.parse(cached);
             state.products = data.products;
             state.categories = data.categories;
-            localStorage.setItem('admin_products', JSON.stringify(data));
-        } catch (githubError) {
-            console.error('Failed to load from GitHub:', githubError);
-            // Load from local storage
-            const cached = localStorage.getItem('admin_products');
-            if (cached) {
-                const data = JSON.parse(cached);
-                state.products = data.products;
-                state.categories = data.categories;
-            } else {
-                // Load defaults
-                loadDefaults();
-            }
+        } else {
+            // Load defaults
+            loadDefaults();
         }
     }
 }
@@ -132,13 +122,8 @@ function createProductItem(product) {
     const icon = getCategoryIcon(product.category);
     const unit = product.unit === 'weight' ? 'за упаковку' : 'за штуку';
 
-    // Показываем фото товара если есть, иначе иконку категории
-    const imageContent = product.image
-        ? `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">`
-        : icon;
-
     item.innerHTML = `
-        <div class="product-image">${imageContent}</div>
+        <div class="product-image">${icon}</div>
         <div class="product-info">
             <div class="product-name">${product.name}</div>
             <div class="product-details">Категория: ${getCategoryName(product.category)}</div>
@@ -178,16 +163,8 @@ function openAddProduct() {
 
 // Edit product
 function editProduct(productId) {
-    console.log('Editing product with ID:', productId, 'Type:', typeof productId);
-    console.log('Available products:', state.products.map(p => ({id: p.id, type: typeof p.id, name: p.name})));
-
-    const product = state.products.find(p => p.id == productId);
-    if (!product) {
-        console.error('Product not found!');
-        alert('Товар не найден. Попробуйте обновить страницу.');
-        return;
-    }
-    console.log('Found product:', product);
+    const product = state.products.find(p => p.id === productId);
+    if (!product) return;
 
     state.currentProduct = product;
     document.getElementById('modalTitle').textContent = 'Редактировать товар';
@@ -209,17 +186,14 @@ function editProduct(productId) {
     // Show image preview if exists
     if (product.image) {
         document.getElementById('imagePreview').innerHTML = `<img src="${product.image}" alt="">`;
-    } else {
-        document.getElementById('imagePreview').innerHTML = '';
     }
 
-    // Open modal
     document.getElementById('productModal').classList.remove('hidden');
 }
 
 // Delete product
 function deleteProduct(productId) {
-    const product = state.products.find(p => p.id == productId);
+    const product = state.products.find(p => p.id === productId);
     if (!product) return;
 
     state.productToDelete = productId;
@@ -230,7 +204,7 @@ function deleteProduct(productId) {
 function confirmDelete() {
     if (!state.productToDelete) return;
 
-    state.products = state.products.filter(p => p.id != state.productToDelete);
+    state.products = state.products.filter(p => p.id !== state.productToDelete);
     saveData();
     loadCategoryProducts();
     closeDeleteModal();
@@ -322,7 +296,7 @@ async function saveProduct(event) {
 function saveProductData(productData) {
     if (state.currentProduct) {
         // Update existing product
-        const index = state.products.findIndex(p => p.id == state.currentProduct.id);
+        const index = state.products.findIndex(p => p.id === state.currentProduct.id);
         if (index !== -1) {
             state.products[index] = {
                 ...state.currentProduct,
@@ -331,7 +305,7 @@ function saveProductData(productData) {
         }
     } else {
         // Add new product
-        const newId = Math.max(...state.products.map(p => p.id || 0), 0) + 1;
+        const newId = Math.max(...state.products.map(p => p.id), 0) + 1;
         state.products.push({
             id: newId,
             ...productData
