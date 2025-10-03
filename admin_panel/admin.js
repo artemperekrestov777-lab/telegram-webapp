@@ -22,21 +22,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadData() {
     try {
         // Try to load from GitHub
-        const response = await fetch(`${GITHUB_RAW}/${GITHUB_REPO}/main/data/products.json`);
+        const response = await fetch(`${GITHUB_RAW}/${GITHUB_REPO}/main/products.json?t=${Date.now()}`);
         const data = await response.json();
-        state.products = data.products;
-        state.categories = data.categories;
-        localStorage.setItem('admin_products', JSON.stringify(data));
+
+        // Convert products object to array format
+        state.products = [];
+        state.categories = [];
+
+        Object.keys(data).forEach(categoryId => {
+            if (Array.isArray(data[categoryId])) {
+                data[categoryId].forEach(product => {
+                    state.products.push({
+                        ...product,
+                        category: categoryId,
+                        id: state.products.length + 1
+                    });
+                });
+            }
+        });
+
+        loadDefaults(); // Load categories
+        localStorage.setItem('admin_products', JSON.stringify({ products: state.products, categories: state.categories }));
     } catch (error) {
         console.error('Failed to load from GitHub:', error);
         // Load from local storage
         const cached = localStorage.getItem('admin_products');
         if (cached) {
             const data = JSON.parse(cached);
-            state.products = data.products;
-            state.categories = data.categories;
-        } else {
-            // Load defaults
+            state.products = data.products || [];
+            state.categories = data.categories || [];
+        }
+        if (state.categories.length === 0) {
             loadDefaults();
         }
     }
@@ -48,17 +64,18 @@ function loadDefaults() {
         { id: "all", name: "Все", icon: "🏪" },
         { id: "new", name: "Новинки от МАК ТАБАК", icon: "✨" },
         { id: "standard", name: "Стандартные бленды", icon: "📦" },
-        { id: "aromatic", name: "Ароматизированные бленды", icon: "🌸" },
-        { id: "pipe", name: "Трубочные бленды", icon: "🚬" },
-        { id: "sleeves", name: "Сигаретные гильзы", icon: "🎯" },
-        { id: "custom", name: "Собрать свой набор", icon: "🎨" },
-        { id: "mactabak", name: "Продукция от МАКТАБАК", icon: "💎" },
-        { id: "pipes", name: "Курительные трубки", icon: "🔧" },
-        { id: "machines", name: "Машинки для набивки", icon: "⚙️" },
-        { id: "tea", name: "Китайский чай", icon: "🍵" },
-        { id: "tamper", name: "Тампер", icon: "🔨" }
+        { id: "burley", name: "BURLEY", icon: "🍂" },
+        { id: "medium", name: "Средняя крепость", icon: "⚖️" },
+        { id: "strong", name: "Крепкий табак", icon: "💪" },
+        { id: "superstrong", name: "Очень крепкий табак", icon: "🔥" },
+        { id: "musthave", name: "MUSTHAVE", icon: "⭐" },
+        { id: "darkside", name: "DARKSIDE", icon: "🌑" },
+        { id: "blackburn", name: "BLACKBURN", icon: "🖤" },
+        { id: "spectrum", name: "SPECTRUM", icon: "🌈" },
+        { id: "element", name: "ELEMENT", icon: "💧" },
+        { id: "tangiers", name: "TANGIERS", icon: "🌴" }
     ];
-    state.products = [];
+    if (!state.products) state.products = [];
 }
 
 // Render categories
@@ -321,15 +338,25 @@ function saveProductData(productData) {
 
 // Save data to local storage and sync
 function saveData() {
-    const data = {
-        categories: state.categories,
-        products: state.products
-    };
+    // Convert array format back to object format for products.json
+    const productsData = {};
 
-    localStorage.setItem('admin_products', JSON.stringify(data));
+    state.categories.forEach(cat => {
+        if (cat.id !== 'all') {
+            productsData[cat.id] = state.products
+                .filter(p => p.category === cat.id)
+                .map(p => {
+                    const { id, category, ...productData } = p;
+                    return productData;
+                });
+        }
+    });
+
+    localStorage.setItem('admin_products', JSON.stringify({ products: state.products, categories: state.categories }));
+    localStorage.setItem('products_for_sync', JSON.stringify(productsData));
 
     // Send to server for GitHub sync
-    syncWithServer(data);
+    syncWithServer(productsData);
 }
 
 // Sync with server
@@ -361,21 +388,23 @@ async function syncWithGitHub() {
     btn.innerHTML = '<span>⏳</span> Синхронизация...';
 
     try {
-        // Get current products
-        const data = {
-            categories: state.categories,
-            products: state.products
-        };
+        const productsData = localStorage.getItem('products_for_sync');
 
-        // Here you would normally use GitHub API with authentication
-        // For now, we'll save to local and show success
-        localStorage.setItem('admin_products', JSON.stringify(data));
-        localStorage.setItem('github_sync_time', new Date().toISOString());
+        if (!productsData) {
+            showNotification('⚠️ Нет данных для синхронизации. Сначала сохраните изменения.', 'error');
+            return;
+        }
 
-        // Simulate sync delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Create download link for products.json
+        const blob = new Blob([productsData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'products.json';
+        a.click();
+        URL.revokeObjectURL(url);
 
-        showNotification('✅ Успешно синхронизировано с GitHub');
+        showNotification('📥 Файл products.json скачан. Загрузите его в репозиторий telegram-webapp на GitHub');
     } catch (error) {
         console.error('GitHub sync error:', error);
         showNotification('❌ Ошибка синхронизации', 'error');
