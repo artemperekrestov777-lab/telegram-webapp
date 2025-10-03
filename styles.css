@@ -155,8 +155,11 @@ body {
 .categories-scroll {
     flex: 1;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
 }
 
 .categories-scroll::-webkit-scrollbar {
@@ -168,6 +171,7 @@ body {
     gap: 10px;
     padding: 5px;
     white-space: nowrap;
+    min-width: min-content;
 }
 
 .category-btn {
@@ -179,6 +183,9 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
 .category-btn.active {
