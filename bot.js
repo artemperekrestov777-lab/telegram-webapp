@@ -309,7 +309,7 @@ async function processOrder(chatId, userId, orderData) {
         }, 3000);
     } else {
         // Generate QR code and payment instructions
-        const qrCodeUrl = generateQRCode(totalAmount);
+        const qrCodeUrl = generateQRCode(totalAmount, orderNumber);
         const paymentMessage = `
 Добрый день! Пожалуйста, прочитайте всю информацию до конца ‼️‼️‼️👇🏻👇🏻👇🏻
 
@@ -407,11 +407,26 @@ ${orderDetails}
     await bot.sendMessage(ADMIN_ID, message);
 }
 
-// Generate QR code URL
-function generateQRCode(amount) {
-    const paymentData = `ST00012|Name=${process.env.PAYMENT_RECEIVER}|PersonalAcc=${process.env.PAYMENT_ACCOUNT}|BankName=|BIC=${process.env.PAYMENT_BIK}|CorrespAcc=|Sum=${amount}00`;
+// Generate QR code URL for Russian bank payment
+function generateQRCode(amount, orderNumber = '') {
+    // Format amount with kopecks (multiply by 100)
+    const amountInKopecks = Math.round(amount * 100);
+
+    // Create payment data in GOST format for Russian banks
+    const paymentData = [
+        'ST00012',  // Service Tag and Format Version
+        `Name=${process.env.PAYMENT_RECEIVER}`,
+        `PersonalAcc=${process.env.PAYMENT_ACCOUNT}`,
+        `BankName=`,
+        `BIC=${process.env.PAYMENT_BIK}`,
+        `CorrespAcc=`,
+        `PayeeINN=${process.env.PAYMENT_INN}`,
+        `Purpose=`,  // Purpose must be empty as per requirements
+        `Sum=${amountInKopecks}`
+    ].join('|');
+
     const encodedData = encodeURIComponent(paymentData);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedData}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodedData}`;
 }
 
 // Save user cart
