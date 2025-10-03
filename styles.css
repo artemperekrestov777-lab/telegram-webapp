@@ -127,9 +127,11 @@ body {
 }
 
 .header-controls {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
 }
 
 .sort-btn,
@@ -153,18 +155,14 @@ body {
 
 /* Categories */
 .categories-scroll {
-    width: 100%;
+    flex: 1;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    background: white;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 60px;
-    z-index: 99;
+    min-width: 0;
 }
 
 .categories-scroll::-webkit-scrollbar {
@@ -174,7 +172,7 @@ body {
 .categories-container {
     display: inline-flex;
     gap: 8px;
-    padding: 10px 15px;
+    padding: 2px;
     white-space: nowrap;
     width: max-content;
 }
@@ -183,12 +181,12 @@ body {
     background: var(--background);
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    padding: 8px 16px;
-    font-size: 14px;
+    padding: 6px 14px;
+    font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
-    flex: 0 0 auto;
+    flex-shrink: 0;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     display: inline-block;
@@ -284,7 +282,6 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
     padding: 15px;
-    margin-top: 50px;
 }
 
 .product-card {
