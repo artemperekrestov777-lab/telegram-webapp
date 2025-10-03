@@ -209,7 +209,7 @@ bot.onText(/\/admin(.*)/, async (msg, match) => {
     }
 
     // Send admin panel link
-    const adminUrl = `https://artemperekrestov777-lab.github.io/telegram-webapp/admin_panel/`;
+    const adminUrl = `https://artemperekrestov777-lab.github.io/telegram-webapp/admin_panel/index.html`;
 
     const keyboard = {
         inline_keyboard: [[
@@ -292,6 +292,21 @@ async function processOrder(chatId, userId, orderData) {
             `С вами в ближайшее время свяжется менеджер для выставления счёта.\n\n` +
             `📧 Email: ${process.env.MANAGER_EMAIL}`
         );
+
+        // Thank the customer and return to catalog
+        setTimeout(async () => {
+            await bot.sendMessage(chatId,
+                `🙏 Спасибо за ваш заказ!\n\n` +
+                `Возвращаем вас в каталог товаров.`,
+                {
+                    reply_markup: {
+                        inline_keyboard: [[
+                            { text: '🛍 Каталог', web_app: { url: process.env.WEBAPP_URL } }
+                        ]]
+                    }
+                }
+            );
+        }, 3000);
     } else {
         // Generate QR code and payment instructions
         const qrCodeUrl = generateQRCode(totalAmount);
@@ -321,6 +336,22 @@ async function processOrder(chatId, userId, orderData) {
             caption: paymentMessage,
             parse_mode: 'HTML'
         });
+
+        // Thank the customer and return to catalog
+        setTimeout(async () => {
+            await bot.sendMessage(chatId,
+                `🙏 Спасибо за ваш заказ!\n\n` +
+                `После оплаты не забудьте отправить чек на почту ${process.env.MANAGER_EMAIL}\n\n` +
+                `Возвращаем вас в каталог товаров.`,
+                {
+                    reply_markup: {
+                        inline_keyboard: [[
+                            { text: '🛍 Каталог', web_app: { url: process.env.WEBAPP_URL } }
+                        ]]
+                    }
+                }
+            );
+        }, 5000);
     }
 
     // Clear cart after order
