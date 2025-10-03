@@ -127,11 +127,9 @@ body {
 }
 
 .header-controls {
-    flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 0; /* Allow flex item to shrink below content size */
 }
 
 .sort-btn,
@@ -145,6 +143,7 @@ body {
     align-items: center;
     justify-content: center;
     transition: background 0.2s;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
 }
 
 .sort-btn:hover,
@@ -154,15 +153,18 @@ body {
 
 /* Categories */
 .categories-scroll {
-    flex: 1;
+    width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    min-width: 0; /* Critical for flex overflow */
-    position: relative;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 60px;
+    z-index: 99;
 }
 
 .categories-scroll::-webkit-scrollbar {
@@ -170,11 +172,11 @@ body {
 }
 
 .categories-container {
-    display: inline-flex; /* Changed from flex to inline-flex */
-    gap: 10px;
-    padding: 5px 10px;
+    display: inline-flex;
+    gap: 8px;
+    padding: 10px 15px;
     white-space: nowrap;
-    min-width: max-content; /* Ensure container is at least as wide as content */
+    width: max-content;
 }
 
 .category-btn {
@@ -186,9 +188,10 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
-    flex-shrink: 0;
+    flex: 0 0 auto;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    display: inline-block;
 }
 
 .category-btn.active {
@@ -281,6 +284,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
     padding: 15px;
+    margin-top: 50px;
 }
 
 .product-card {
