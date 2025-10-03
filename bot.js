@@ -14,6 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = process.env.ADMIN_ID;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mactabak2024';
 const WEBAPP_URL = process.env.WEBAPP_URL;
 
 // Security middleware
@@ -187,6 +188,50 @@ bot.onText(/\/start/, async (msg) => {
             );
         }, 2000);
     }
+});
+
+// Admin command
+bot.onText(/\/admin(.*)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const password = match[1] ? match[1].trim() : '';
+
+    // Check if user is admin
+    if (userId.toString() !== ADMIN_ID) {
+        await bot.sendMessage(chatId, '❌ У вас нет доступа к админ-панели');
+        return;
+    }
+
+    // Check password
+    if (password !== ADMIN_PASSWORD) {
+        await bot.sendMessage(chatId, '🔐 Введите пароль:\n/admin ваш_пароль');
+        return;
+    }
+
+    // Send admin panel link
+    const adminUrl = `https://artemperekrestov777-lab.github.io/telegram-webapp/admin/`;
+
+    const keyboard = {
+        inline_keyboard: [[
+            {
+                text: '🛠 Открыть Админ-панель',
+                web_app: { url: adminUrl }
+            }
+        ]]
+    };
+
+    await bot.sendMessage(chatId,
+        `✅ Доступ разрешён!\n\n` +
+        `🛠 Админ-панель МакТабак\n\n` +
+        `Функции:\n` +
+        `• Добавление товаров\n` +
+        `• Редактирование товаров\n` +
+        `• Удаление товаров\n` +
+        `• Управление категориями\n` +
+        `• Синхронизация с GitHub\n\n` +
+        `Нажмите кнопку ниже для открытия панели:`,
+        { reply_markup: keyboard }
+    );
 });
 
 // WebApp data handler
